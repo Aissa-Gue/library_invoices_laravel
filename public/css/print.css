@@ -1,0 +1,71 @@
+@media print {
+
+    .col-sm-auto {
+        flex: 0 0 auto;
+        width: auto;
+    }
+    .col-sm-12{
+        width:100%;
+        float:left;
+    }
+    .col-sm-11{
+        width:92%;
+        float:left;
+    }
+    .col-sm-10{
+        width:83%;
+        float:left;
+    }
+    .col-sm-9{
+        width:75%;
+        float:left;
+    }
+    .col-sm-8 {
+        width:66%;
+        float:left;
+    }
+    .col-sm-7{
+        width:58%;
+        float:left;
+    }
+    .col-sm-6 {
+        width:50%;
+        float:left;
+    }
+    .col-sm-5{
+        width:42%;
+        float:left;
+    }
+    .col-sm-4{
+        width:33%;
+        float:left;
+    }
+    .col-sm-3{
+        width:25%;
+        float:left;
+    }
+    .col-sm-2{
+        width:16%;
+        float:left;
+    }
+    .col-sm-1{
+        width:8%;
+        float:left;
+    }
+    .justify-content-md-center {
+        justify-content: center!important;
+    }
+    .align-items-end {
+        align-items: flex-end!important;
+    }
+    .my_hidden{
+        display: none;
+    }
+    .my_A5 {
+        /*width: 148mm;*/
+        height: 193mm;
+    }
+    .my_pr_mr {
+       margin-top: 5cm;
+    }
+}

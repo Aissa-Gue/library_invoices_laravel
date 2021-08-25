@@ -1,0 +1,49 @@
+
+/****** START SIDEBAR ******/
+.my_fixed_sidebar {
+    position: fixed;
+    right: 0;
+    z-index: 1030;
+    font-size: 15.3px;
+    font-weight: bold;
+    width: 180px;
+    /* background-color: #fff; */
+}
+
+
+.my_navList {
+    position: relative;
+    display: block;
+    padding: 0.35rem 1.25rem;
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: bold;
+}
+
+.my_mt{
+    margin-top: 90px;
+}
+
+.my_sidebar i,
+.nav-item a{
+    color: var(--my_fontColor);
+}
+.list-group-item{
+    color: #2d3748;
+}
+.list-group-item.active,
+.list-group-item.active i{
+    color: white;
+    background-color: var(--my_primaryColor);
+    border: var(--my_primaryColor) solid 1px;
+}
+
+.my_bg-danger{
+    background-color: var(--my_primaryColor);
+}
+
+.nav-pills .nav-link.active
+{
+    background-color: var(--my_primaryColor);
+
+}
