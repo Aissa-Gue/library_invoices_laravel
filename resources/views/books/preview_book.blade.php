@@ -67,11 +67,11 @@
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-5">سعر الشراء:</th>
-                    <td class="col-md-6">{{$book->purchase_price}}</td>
+                    <td class="col-md-6">{{$book->purchase_price}}.00  دج</td>
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-5">سعر البيع:</th>
-                    <td class="col-md-6">{{$book->sale_price}}</td>
+                    <td class="col-md-6">{{$book->sale_price}}.00 دج</td>
                 </tr>
                 <tr class="row mt-4">
                     <td class="col-md-11 text-center">

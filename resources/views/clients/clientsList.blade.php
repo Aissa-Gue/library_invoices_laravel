@@ -24,7 +24,7 @@
 
     <div class="row">
         <div class="alert alert-warning text-center" role="alert">
-            <strong> عدد النتائج = </strong> {{$clients->count()}}
+            <strong> عدد النتائج = </strong> {{$clients->total()}}
         </div>
 
         <table class="table table-hover">
@@ -94,10 +94,10 @@
             @endforeach
             </tbody>
         </table>
-
+        <div class="row justify-content-center fixed-bottom">
+            <div class="offset-2 col-md-auto">
+                {{$clients->links()}}
+            </div>
+        </div>
     </div>
-
-
-
-
-@stop
+@endsection

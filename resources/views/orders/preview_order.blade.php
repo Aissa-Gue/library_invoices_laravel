@@ -1,8 +1,8 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="alert alert-primary text-center h4" role="alert">
-        معلومات الفاتورة
+    <div class="alert alert-primary text-center mb-4" role="alert">
+        <h4>معلومات الفاتورة</h4>
     </div>
 
     <!-- 1st row -->
@@ -36,7 +36,7 @@
 
     <!-- 3rd row -->
     <fieldset class="scheduler-border">
-        <legend class="scheduler-border">فائمة الكتب</legend>
+        <legend class="scheduler-border">قائمة الكتب</legend>
         <div class="row mt-3">
             <table class="table table-hover">
                 <thead>
@@ -104,10 +104,17 @@
             <form action="{{Route('deleteOrder',$order->id)}}" method="post">
                 @csrf
                 @method('DELETE')
-                <a href="{{Route('previewOrder',$order->id)}}" class="btn btn-success w-25">
-                    <i class="fas fa-print"></i>
-                    طباعة
-                </a>
+                @if($order->type == 'إهداء')
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#giftModal" class="btn btn-success w-25">
+                        <i class="fas fa-print"></i>
+                        طباعة
+                    </button>
+                @else
+                    <a href="{{Route('printOrder',$order->id)}}" class="btn btn-success w-25">
+                        <i class="fas fa-print"></i>
+                        طباعة
+                    </a>
+                @endif
                 <a href="{{Route('editOrder',$order->id)}}" class="btn btn-primary w-25">
                     <i class="fas fa-edit"></i>
                     تعديل
@@ -118,5 +125,26 @@
                 </button>
             </form>
         </div>
+
+        <!-- Print Modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="giftModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="giftModalLabel">نوع الفاتورة</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        حدد الفاتورة التي تريد طباعتها؟
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <a href="{{Route('printOrder',$order->id)}}?invoice=buyer" class="btn btn-success">فاتورة الزبون</a>
+                        <a href="{{Route('printOrder',$order->id)}}?invoice=seller" class="btn btn-primary">فاتورة البائع</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Print Modal-->
     </fieldset>
 @endsection

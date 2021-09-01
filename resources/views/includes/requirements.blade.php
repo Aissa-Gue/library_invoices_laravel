@@ -12,7 +12,7 @@
 
 <!-- FONTS -->
 <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Scheherazade:wght@700&display=swap" rel="stylesheet">
 <!-- MY CSS -->
 <link href="{{URL::asset('css/side-nav-bar.css')}}" rel="stylesheet">
 <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">

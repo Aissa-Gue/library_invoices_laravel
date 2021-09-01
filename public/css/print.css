@@ -6,51 +6,51 @@
     }
     .col-sm-12{
         width:100%;
-        float:left;
+        float:right;
     }
     .col-sm-11{
         width:92%;
-        float:left;
+        float:right;
     }
     .col-sm-10{
         width:83%;
-        float:left;
+        float:right;
     }
     .col-sm-9{
         width:75%;
-        float:left;
+        float:right;
     }
     .col-sm-8 {
         width:66%;
-        float:left;
+        float:right;
     }
     .col-sm-7{
         width:58%;
-        float:left;
+        float:right;
     }
     .col-sm-6 {
         width:50%;
-        float:left;
+        float:right;
     }
     .col-sm-5{
         width:42%;
-        float:left;
+        float:right;
     }
     .col-sm-4{
         width:33%;
-        float:left;
+        float:right;
     }
     .col-sm-3{
         width:25%;
-        float:left;
+        float:right;
     }
     .col-sm-2{
         width:16%;
-        float:left;
+        float:right;
     }
     .col-sm-1{
         width:8%;
-        float:left;
+        float:right;
     }
     .justify-content-md-center {
         justify-content: center!important;
@@ -60,6 +60,10 @@
     }
     .my_hidden{
         display: none;
+    }
+    .my_A4 {
+        /*width: 297mm;*/
+        height: 160mm;
     }
     .my_A5 {
         /*width: 148mm;*/

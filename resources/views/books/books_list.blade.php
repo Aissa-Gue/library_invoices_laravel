@@ -23,7 +23,7 @@
 
     <div class="row">
         <div class="alert alert-warning text-center" role="alert">
-            <strong> عدد النتائج = </strong>{{$books->count()}}
+            <strong> عدد النتائج = </strong>{{$books->total()}}
         </div>
 
         <table class="table table-hover">
@@ -100,5 +100,10 @@
             @endforeach
             </tbody>
         </table>
+        <div class="row justify-content-center fixed-bottom">
+            <div class="offset-2 col-md-auto">
+                {{$books->links()}}
+            </div>
+        </div>
     </div>
 @stop

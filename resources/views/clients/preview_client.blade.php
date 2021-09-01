@@ -32,11 +32,11 @@
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-2">رقم الهاتف 1:</th>
-                    <td class="col-md-9">{{$client->phone1}}</td>
+                    <td class="col-md-9">0{{$client->phone1}}</td>
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-2">رقم الهاتف 2:</th>
-                    <td class="col-md-9">{{$client->phone2}}</td>
+                    <td class="col-md-9">0{{$client->phone2}}</td>
                 </tr>
                 </tbody>
             </table>

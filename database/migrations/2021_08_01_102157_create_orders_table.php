@@ -19,6 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('type',10);
             $table->integer('discount_percentage');
             $table->float('paid_amount');
+            $table->float('required_amount');
             $table->timestamps();
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';

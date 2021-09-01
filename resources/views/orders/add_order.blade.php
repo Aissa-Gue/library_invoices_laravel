@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="alert alert-primary text-center" role="alert">
+    <div class="alert alert-primary text-center mb-4" role="alert">
         <h4>إضافة فاتورة</h4>
     </div>
 
@@ -46,10 +46,9 @@
                     @enderror
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-2 offset-md-10">
-                    <button type="submit" class="btn btn-success btn-lg"> إضافة</button>
-                </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-outline-success py-2"><i class="fas fa-plus"></i> إضافة الفاتورة
+                </button>
             </div>
         </fieldset>
     </form>

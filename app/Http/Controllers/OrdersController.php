@@ -21,7 +21,9 @@ class OrdersController extends Controller
             ->Join("books", function ($join) {
                 $join->on("books.id", "=", "order__books.book_id");
             })
-            ->select(DB::raw('sum(order__books.quantity * order__books.purchase_price) As purchase_price_sum'), DB::raw('sum(order__books.quantity * order__books.sale_price) As sale_price_sum'), DB::raw('sum(order__books.quantity) As quantity'))
+            ->select(DB::raw('sum(order__books.quantity * order__books.purchase_price) As purchase_price_sum'),
+                DB::raw('sum(order__books.quantity * order__books.sale_price) As sale_price_sum'),
+                DB::raw('sum(order__books.quantity) As quantity'))
             ->where("order__books.order_id", "=", $id)
             ->where("books.discount", "=", 1)
             ->groupBy("order__books.order_id")
@@ -31,7 +33,9 @@ class OrdersController extends Controller
             ->Join("books", function ($join) {
                 $join->on("books.id", "=", "order__books.book_id");
             })
-            ->select(DB::raw('sum(order__books.quantity * order__books.purchase_price) As purchase_price_sum'), DB::raw('sum(order__books.quantity * order__books.sale_price) As sale_price_sum'), DB::raw('sum(order__books.quantity) As quantity'))
+            ->select(DB::raw('sum(order__books.quantity * order__books.purchase_price) As purchase_price_sum'),
+                DB::raw('sum(order__books.quantity * order__books.sale_price) As sale_price_sum'),
+                DB::raw('sum(order__books.quantity) As quantity'))
             ->where("order__books.order_id", "=", $id)
             ->where("books.discount", "=", 0)
             ->groupBy("order__books.order_id")
@@ -41,7 +45,7 @@ class OrdersController extends Controller
             $total_quantity = $discBooks->quantity + $NonDiscBooks->quantity;
             $total_purchase_price = $discBooks->purchase_price_sum + $NonDiscBooks->purchase_price_sum;
             $total_sale_price = $discBooks->sale_price_sum + $NonDiscBooks->sale_price_sum;
-            $total_discountable_price = $NonDiscBooks->sale_price_sum + $discBooks->sale_price_sum - ($discBooks->sale_price_sum * $order->discount_percentage / 100);
+            $total_discountable_price = ($NonDiscBooks->sale_price_sum + $discBooks->sale_price_sum) - ($discBooks->sale_price_sum * $order->discount_percentage / 100);
 
 
         } elseif (empty($discBooks) and empty($NonDiscBooks)) {
@@ -74,6 +78,12 @@ class OrdersController extends Controller
     }
 
 
+    public function updateRequiredAmount($id)
+    {
+        $total_discountable_price = $this->calculate($id)['total_discountable_price'];
+        Order::where('id',$id)->update(['required_amount' => $total_discountable_price]);
+    }
+
     public function showAllData(Request $request)
     {
         $lname = $request->get('last_name');
@@ -87,7 +97,7 @@ class OrdersController extends Controller
             ->where('type', 'LIKE', '%' . $type . '%')
             ->where('orders.id', 'LIKE', '%' . $order_id)
             ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.created_at', 'last_name', 'first_name', 'father_name')
-            ->paginate(10);
+            ->paginate(15);
 
 
         return view('orders.orders_list')->with('orders', $orders);
@@ -103,6 +113,29 @@ class OrdersController extends Controller
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
 
         return view('orders.preview_order')
+            ->with(compact('order', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price'));
+    }
+
+    public function print($id, Request $req)
+    {
+        $order = $this->calculate($id)['order'];
+        $orderBooks = $this->calculate($id)['orderBooks'];
+        $total_quantity = $this->calculate($id)['total_quantity'];
+        $total_purchase_price = $this->calculate($id)['total_purchase_price'];
+        $total_sale_price = $this->calculate($id)['total_sale_price'];
+        $total_discountable_price = $this->calculate($id)['total_discountable_price'];
+
+        if ($order->type == 'إهداء') {
+            if ($req->invoice == 'seller') {
+                $view = view('orders.print.gift1_A4');
+
+            } elseif ($req->invoice == 'buyer') {
+                $view = view('orders.print.gift2_A4');
+            }
+        } else {
+            $view = view('orders.print.sale_exhibition_A4');
+        }
+        return $view
             ->with(compact('order', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price'));
     }
 
@@ -133,6 +166,7 @@ class OrdersController extends Controller
             'paid_amount' => 'required|numeric',
         ]);
         $order = Order::find($id)->update($validated);
+        $this->updateRequiredAmount($id);
         return redirect(Route('editOrder', $id));
     }
 
@@ -161,25 +195,40 @@ class OrdersController extends Controller
                 'book_id' => $book[0],
                 'order_id' => $id,
                 'purchase_price' => $Current_book->purchase_price,
-                'sale_price' => $Current_book->sale_price
+                'sale_price' => $Current_book->sale_price,
             ]
         );
 
         $validated = $request->validate([
             'order_id' => 'required|numeric|exists:orders,id',
             'book_id' => 'required|numeric|exists:books,id',
-            'quantity' => 'required|numeric',
+            'quantity' => 'required|numeric|min:1|max:'.$Current_book->quantity,
             'purchase_price' => 'required|numeric',
             'sale_price' => 'required|numeric'
         ]);
 
         Order_Book::Create($validated);
+        $this->updateRequiredAmount($id);
+
+        //decrement book stock
+        $currentBook = Book::find($request->book_id);
+        $currentBook->decrement('quantity', $request->quantity);
+
         return redirect(Route('editOrder', $id));
     }
 
     public function destroyBook($id, $book_id)
     {
+        $order_book = Order_Book::where('order_id', $id)->where('book_id', $book_id)->first();
+
+        //increment book stock
+        $currentBook = Book::find($book_id);
+        $currentBook->increment('quantity', $order_book->quantity);
+
+        //delete Book from order
         Order_Book::where('order_id', $id)->where('book_id', $book_id)->delete();
+        $this->updateRequiredAmount($id);
+
         return redirect(Route('editOrder', $id));
     }
 

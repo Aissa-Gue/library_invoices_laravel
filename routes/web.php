@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+//index
+Route::get('/', '\App\Http\Controllers\Controller@index')->name('home');
+
+
 //Books
 Route::get('books/add', '\App\Http\Controllers\BooksController@add')->name('addBook');
 Route::post('books/add', '\App\Http\Controllers\BooksController@store')->name('addBook');
@@ -44,6 +48,7 @@ Route::post('orders/addBook/{id}', '\App\Http\Controllers\OrdersController@store
 
 Route::get('orders/list', '\App\Http\Controllers\OrdersController@showAllData')->name('ordersList');
 Route::get('orders/preview/{id}', '\App\Http\Controllers\OrdersController@show')->name('previewOrder');
+Route::get('orders/print/{id}', '\App\Http\Controllers\OrdersController@print')->name('printOrder');
 
 Route::get('orders/edit/{id}', '\App\Http\Controllers\OrdersController@edit')->name('editOrder');
 Route::post('orders/edit/{id}', '\App\Http\Controllers\OrdersController@update')->name('editOrder');
@@ -53,5 +58,10 @@ Route::delete('orders/delete/{id}', '\App\Http\Controllers\OrdersController@dest
 
 //Reports
 Route::get('report', '\App\Http\Controllers\ReportController@showAllData')->name('report');
-Route::get('settings/list', '\App\Http\Controllers\SettingsController@showAllData')->name('settings');
+
+//Settings
+Route::get('settings', '\App\Http\Controllers\SettingsController@show')->name('settings');
+Route::get('settings/export', '\App\Http\Controllers\SettingsController@export')->name('exportDB');
+Route::get('settings/drop', '\App\Http\Controllers\SettingsController@drop')->name('dropDB');
+Route::post('settings/import', '\App\Http\Controllers\SettingsController@import')->name('importDB');
 

@@ -203,7 +203,7 @@
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ الإجمالي (بالتخفيض):</th>
-                        <th class="text-center">{{$total_discountable_price}}</th>
+                        <th class="text-center">{{round($total_discountable_price,2)}}</th>
                     </tr>
                     </tbody>
                 </table>

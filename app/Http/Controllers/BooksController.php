@@ -15,7 +15,7 @@ class BooksController extends Controller
 
         $books = Book::where('title', 'LIKE', '%' . $title . '%')
             ->where('author', 'LIKE', '%' . $author . '%')
-            ->paginate(90);
+            ->paginate(15);
 
         return view('books.books_list')->with('books', $books);
     }

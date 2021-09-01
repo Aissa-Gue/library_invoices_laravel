@@ -14,7 +14,7 @@ class ClientsController extends Controller
 
         $clients = Client::where('last_name', 'LIKE', '%' . $last_name . '%')
             ->where('first_name', 'LIKE', '%' . $first_name . '%')
-            ->get();
+            ->paginate(15);
 
         return view('clients.clientsList')->with('clients', $clients);
     }
