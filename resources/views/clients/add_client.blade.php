@@ -9,14 +9,6 @@
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">معلومات الزبون</legend>
             <div class="row">
-                <div class="col-md-2 mb-2">
-                    <label class="form-label" for="client_id">رقم الزبون</label>
-                    <input type="number" class="form-control text-center" name="client_id" id="client_id"
-                           value="1" placeholder="أدخل رقم الزبون">
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-md-3 mb-2">
                     <label class="form-label" for="last_name">اللقب</label>
                     <input type="text" class="form-control" name="last_name" id="last_name"

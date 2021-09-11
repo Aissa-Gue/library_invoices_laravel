@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Order;
-use App\Models\Order_Book;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -50,18 +49,11 @@ class Controller extends BaseController
             ->groupBy('orders.id')
             ->get();
 
-        ////
-        $monthly_paid_amounts = Order::select(DB::raw('MONTH(orders.created_at) as month_nbr, MONTHNAME(orders.created_at) as month_name, SUM(required_amount) as required_amount'))
-            ->whereYear('orders.created_at', Carbon::now()->year)
-            ->groupBy("month_name")
-            ->orderBy('month_nbr')
+        $alert_books = Book::where('quantity', '<', 6)
+            ->select('id', 'title', 'quantity')
             ->get();
 
-
-        $alert_books = Book::where('quantity','<',6)
-            ->select('id','title','quantity')
-            ->get();
-
+        /////////////
         $monthly_paid_amounts = Order::join('order__books', 'order__books.order_id', 'orders.id')
             ->whereYear('orders.created_at', Carbon::now()->year)
             ->select('order_id',

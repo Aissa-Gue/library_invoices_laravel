@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Validator;
 Use App\Models\Client;
 
@@ -22,7 +24,12 @@ class ClientsController extends Controller
     public function show($id)
     {
         $client = Client::findOrFail($id);
-        return view('clients.preview_client')->with('client', $client);
+        $details = Order::where('client_id',$id)
+            ->select(DB::raw('COUNT(*) as total_orders, SUM(required_amount) as total_amount'))
+            ->first();
+
+        return view('clients.preview_client')
+            ->with(compact('client','details'));
     }
 
     public function add(){
@@ -52,7 +59,7 @@ class ClientsController extends Controller
 
     public function update($id, Request $request)
     {
-        $request->flash();
+        //$request->flash();
         $validated = $request->validate([
             'last_name' => 'alpha|required',
             'first_name' => 'alpha|required',

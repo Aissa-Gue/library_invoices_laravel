@@ -51,12 +51,12 @@
                 </thead>
                 <tbody>
                 <tr class="row py-1">
-                    <th class="col-md-5">عدد الكتب المباعة:</th>
-                    <td class="col-md-6">{{$client->id}}</td>
+                    <th class="col-md-5">عدد الفواتير:</th>
+                    <td class="col-md-6">{{$details->total_orders}}</td>
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-5">المبلغ الإجمالي:</th>
-                    <td class="col-md-6">{{$client->id}}</td>
+                    <td class="col-md-6">{{number_format($details->total_amount,2)}} دج </td>
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-5">تاريخ الإنشاء:</th>

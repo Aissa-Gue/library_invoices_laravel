@@ -93,12 +93,12 @@
 
                 <div class="col-md-2">
                     <input type="text" class="form-control text-center" id="purchase_price"
-                           value="{{$orderBook->purchase_price * $orderBook->quantity}}.00" disabled>
+                           value="{{number_format($orderBook->purchase_price * $orderBook->quantity,2)}}" disabled>
                 </div>
 
                 <div class="col-md-2">
                     <input type="text" class="form-control text-center" id="sale_price"
-                           value="{{$orderBook->sale_price * $orderBook->quantity}}.00" disabled>
+                           value="{{number_format($orderBook->sale_price * $orderBook->quantity,2)}}" disabled>
                 </div>
 
                 <div class="col-md-1">
@@ -148,37 +148,9 @@
                 </div>
             </div>
         </form>
-
         <!-- END insert book -->
 
-    <!--
-        <div class="row mt-3">
-            <div class="col-md-2 offset-md-5">
-                <label for="quantity_sum" class="form-label">عدد الكتب</label>
-                <input type="number" class="form-control text-center" id="quantity_sum" value="{{$total_quantity}}"
-                       disabled>
-            </div>
-            <div class="col-md-2">
-                <label for="purchase_price_sum" class="form-label">إجمالي الشراء</label>
-                <input type="text" class="form-control" id="purchase_price_sum" value="{{$total_purchase_price}}.00"
-                       disabled>
-            </div>
-            <div class="col-md-2">
-                <label for="sale_price_sum" class="form-label">إجمالي البيع</label>
-                <input type="text" class="form-control" id="sale_price_sum" value="{{$total_sale_price}}.00" disabled>
-            </div>
-        </div>
-
-        <div class="row mt-1">
-            <div class="col-md-2 offset-md-9">
-                <label for="sale_price_sum_discountable" class="form-label">المبلغ بالتخفيض</label>
-                <input type="text" class="form-control" id="sale_price_sum_discountable"
-                       value="{{$total_discountable_price}}" disabled>
-            </div>
-        </div>
-
--->
-        <!-- END 3rd row -->
+            <!-- END 3rd row -->
         <div class="row justify-content-md-end mt-4">
             <div class="col-md-4">
                 <table class="table table-hover">
@@ -194,16 +166,16 @@
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ لإجمالي للشراء:</th>
-                        <th class="text-center">{{$total_purchase_price}}.00</th>
+                        <th class="text-center">{{number_format($total_purchase_price,2)}}</th>
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ الإجمالي للبيع:</th>
-                        <th class="text-center">{{$total_sale_price}}.00</th>
+                        <th class="text-center">{{number_format($total_sale_price,2)}}</th>
 
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ الإجمالي (بالتخفيض):</th>
-                        <th class="text-center">{{round($total_discountable_price,2)}}</th>
+                        <th class="text-center">{{number_format($total_discountable_price,2)}}</th>
                     </tr>
                     </tbody>
                 </table>

@@ -11,12 +11,6 @@
             <legend class="scheduler-border">معلومات الفاتورة</legend>
             <!-- 1st row -->
             <div class="row mb-3">
-                <div class="col-md-2 ">
-                    <label for="order_id" class="form-label">رقم الفاتورة</label>
-                    <input type="number" name="order_id" class="form-control text-center"
-                           value="" id="order_id" readonly>
-                </div>
-
                 <div class="form-group col-md-2">
                     <label for="type" class="form-label">نوع الفاتورة</label>
                     <select class="form-control" name="type" id="type">

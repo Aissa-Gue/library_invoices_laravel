@@ -1,19 +1,15 @@
 /*general */
 :root {
-/ / --my_primaryColor: #ff5959;
-/ / --my_fontColor: red;
+    --my_primaryColor: #1167b1; /* #0d6efd  #1167b1 */
+    --my_secondaryColor: #187bcd;
+    --my_thirdColor: #2a9df4;
+    --my_lightColor: #d0efff;
+    --my_fontColor: #03254c;
 
-/ / --my_primaryColor: #4154fe;
-/ / --my_fontColor: blue;
-
-    --my_primaryColor: #009999;
-    --my_fontColor: #009973;
 }
 
 body {
-    background-color: #f7fafc;
     font-family: "Cairo", sans-serif;
-    /* background-color: snow; */
 }
 
 body,
@@ -22,14 +18,27 @@ html {
     margin: 0;
 }
 
+.my_mt{
+    margin-top: 90px;
+}
+
+.my_bg {
+    background: linear-gradient(
+        rgba(255, 255, 255, 0.7),
+        rgba(252, 255, 254, 0.7)
+    ),
+    url(../img/preview2.jpg) center / cover no-repeat fixed;
+    min-height: 90%;
+}
+
+
 .form-control:disabled,
 .form-control[readonly] {
     background-color: white;
 }
 
 fieldset.scheduler-border {
-    /* border: 1px groove #ddd !important; */
-    border: 3px groove #17a2b8 !important;
+    border: 3px groove var(--my_primaryColor) !important; /* #17a2b8 */
     border-radius: 10px;
     padding: 0 1.4em 1.4em 1.4em !important;
     margin: 0 0 1.5em 0 !important;
@@ -44,11 +53,10 @@ legend.scheduler-border {
     text-align: center !important;
     margin-top: -17px;
     border-radius: 10px;
-    background-color: #009999; /*#20c997;*/
+    background-color: var(--my_primaryColor);/*#009999 #20c997;*/
     color: #ffffff;
     width: 170px;
 }
-
 /*End general*/
 
 
@@ -74,94 +82,4 @@ legend.scheduler-border {
 
 .my_radious {
     border-radius: 15px;
-}
-
-/* preview */
-.my_bg {
-    background: linear-gradient(
-        rgba(255, 255, 255, 0.8),
-        rgba(252, 255, 254, 0.8)
-    ),
-    url(../img/preview.jpg) center / cover no-repeat fixed;
-    min-height: 100%;
-}
-
-/** Print page **/
-@media print {
-    .col-sm-auto {
-        flex: 0 0 auto;
-        width: auto;
-    }
-
-    .my_hidden {
-        display: none;
-    }
-
-    .col-sm-12 {
-        width: 100%;
-        float: left;
-    }
-
-    .col-sm-11 {
-        width: 92%;
-        float: left;
-    }
-
-    .col-sm-10 {
-        width: 83%;
-        float: left;
-    }
-
-    .col-sm-9 {
-        width: 75%;
-        float: left;
-    }
-
-    .col-sm-8 {
-        width: 66%;
-        float: left;
-    }
-
-    .col-sm-7 {
-        width: 58%;
-        float: left;
-    }
-
-    .col-sm-6 {
-        width: 50%;
-        float: left;
-    }
-
-    .col-sm-5 {
-        width: 42%;
-        float: left;
-    }
-
-    .col-sm-4 {
-        width: 33%;
-        float: left;
-    }
-
-    .col-sm-3 {
-        width: 25%;
-        float: left;
-    }
-
-    .col-sm-2 {
-        width: 16%;
-        float: left;
-    }
-
-    .col-sm-1 {
-        width: 8%;
-        float: left;
-    }
-
-    .justify-content-md-center {
-        justify-content: center !important;
-    }
-
-    .my_background_print {
-        background-size: 0 0;
-    }
 }

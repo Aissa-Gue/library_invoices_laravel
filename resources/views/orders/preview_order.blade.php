@@ -29,7 +29,7 @@
                 <p><strong>نسبة التخفبض: </strong>{{$order->discount_percentage}}%</p>
             </div>
             <div class="col-md-3">
-                <p><strong>المبلغ المدفوع: </strong>{{$order->paid_amount}} دج </p>
+                <p><strong>المبلغ المدفوع: </strong>{{number_format($order->paid_amount,2)}} دج </p>
             </div>
         </div>
     </fieldset>
@@ -56,11 +56,11 @@
                     <tr>
                         <th scope="row">{{++$i}}</th>
                         <td>{{$orderBook->book->title}}</td>
-                        <td class="text-center">{{$orderBook->purchase_price}}.00</td>
-                        <td class="text-center">{{$orderBook->sale_price}}.00</td>
+                        <td class="text-center">{{number_format($orderBook->purchase_price,2)}}</td>
+                        <td class="text-center">{{number_format($orderBook->sale_price,2)}}</td>
                         <td class="text-center">{{$orderBook->quantity}}</td>
-                        <td class="text-center">{{$orderBook->purchase_price * $orderBook->quantity}}.00</td>
-                        <td class="text-center">{{$orderBook->sale_price * $orderBook->quantity}}.00</td>
+                        <td class="text-center">{{number_format($orderBook->purchase_price * $orderBook->quantity,2)}}</td>
+                        <td class="text-center">{{number_format($orderBook->sale_price * $orderBook->quantity,2)}}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -84,16 +84,16 @@
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ لإجمالي للشراء:</th>
-                        <th class="text-center">{{$total_purchase_price}}.00</th>
+                        <th class="text-center">{{number_format($total_purchase_price,2)}}</th>
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ الإجمالي للبيع:</th>
-                        <th class="text-center">{{$total_sale_price}}.00</th>
+                        <th class="text-center">{{number_format($total_sale_price,2)}}</th>
 
                     </tr>
                     <tr>
                         <th scope="row" class="text-danger">المبلغ الإجمالي (بالتخفيض):</th>
-                        <th class="text-center">{{$total_discountable_price}}</th>
+                        <th class="text-center">{{number_format($total_discountable_price,2)}}</th>
                     </tr>
                     </tbody>
                 </table>

@@ -72,4 +72,7 @@
     .my_pr_mr {
        margin-top: 5cm;
     }
+    .my_background_print {
+        background-size: 0 0;
+    }
 }

@@ -59,9 +59,17 @@ Route::delete('orders/delete/{id}', '\App\Http\Controllers\OrdersController@dest
 //Reports
 Route::get('report', '\App\Http\Controllers\ReportController@showAllData')->name('report');
 
-//Settings
+// ***** Settings ***** //
+//Database
 Route::get('settings', '\App\Http\Controllers\SettingsController@show')->name('settings');
-Route::get('settings/export', '\App\Http\Controllers\SettingsController@export')->name('exportDB');
-Route::get('settings/drop', '\App\Http\Controllers\SettingsController@drop')->name('dropDB');
-Route::post('settings/import', '\App\Http\Controllers\SettingsController@import')->name('importDB');
+Route::get('settings/dropDB', '\App\Http\Controllers\SettingsController@dropDB')->name('dropDB');
+Route::post('settings/importDB', '\App\Http\Controllers\SettingsController@importDB')->name('importDB');
+Route::get('settings/exportDB', '\App\Http\Controllers\SettingsController@exportDB')->name('exportDB');
 
+//Books
+Route::post('settings/importExcelBooks', '\App\Http\Controllers\SettingsController@importExcelBooks')->name('importExcelBooks');
+Route::get('settings/exportExcelBooks', '\App\Http\Controllers\SettingsController@exportExcelBooks')->name('exportExcelBooks');
+
+//Clients
+Route::post('settings/importExcelClients', '\App\Http\Controllers\SettingsController@importExcelClients')->name('importExcelClients');
+Route::get('settings/exportExcelClients', '\App\Http\Controllers\SettingsController@exportExcelClients')->name('exportExcelClients');

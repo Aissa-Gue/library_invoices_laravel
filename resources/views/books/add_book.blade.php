@@ -12,12 +12,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="row">
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label" for="book_id">رقم الكتاب</label>
-                            <input type="number" class="form-control text-center" name="book_id" id="book_id"
-                                   placeholder="أدخل رقم الكتاب" value="{{request()->get('book_id')}}" readonly>
-                        </div>
-                        <div class="col-md-9 mb-2">
+                        <div class="col-md-10 mb-2">
                             <label class="form-label" for="title">عنوان الكتاب</label>
                             <input type="text" class="form-control" name="title" id="title"
                                    placeholder="أدخل عنوان الكتاب" value="{{request()->get('title')}}">

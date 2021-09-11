@@ -2,25 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BooksExport;
+use App\Exports\ClientsExport;
+use App\Imports\BooksImport;
+use App\Imports\ClientsImport;
+use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class SettingsController extends Controller
 {
-    //******* Settings
+    //******* Settings  **********//
+
+    ////// Database ///////
     public function show()
     {
         return view('settings.settings');
     }
 
-    public function export()
+    public function exportDB()
     {
         $username = env('DB_USERNAME');
         $dbname = env('DB_DATABASE');
         $d = date('Y-m-d');
         $t = time();
         $dir = 'D:/library_invoices_backups/' . $d . '/';
-        $path = $dir . $dbname .'_' . $t . '.sql';
+        $path = $dir . $dbname . '_' . $t . '.sql';
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
@@ -38,7 +47,7 @@ class SettingsController extends Controller
         }
     }
 
-    public function import()
+    public function importDB()
     {
         if (isset($_FILES['db'])) {
             $file = $_FILES['db'];
@@ -98,7 +107,7 @@ class SettingsController extends Controller
         }
     }
 
-    public function drop()
+    public function dropDB()
     {
         // drop all the data from the database (no need for doctrine)
         DB::statement("SET foreign_key_checks=0");
@@ -115,5 +124,33 @@ class SettingsController extends Controller
         DB::statement("SET foreign_key_checks=1");
 
         return redirect('settings');
+    }
+
+
+    ////// Books ///////
+    public function importExcelBooks()
+    {
+        Excel::import(new BooksImport, request()->file('books_file'));
+
+        return redirect(Route('booksList'))->with('success', 'All good!');
+    }
+
+    function exportExcelBooks()
+    {
+        return Excel::download(new BooksExport, 'قائمة الكتب.xlsx');
+    }
+
+
+    ////// Clients ///////
+    public function importExcelClients()
+    {
+        Excel::import(new ClientsImport, request()->file('clients_file'));
+
+        return redirect(Route('clientsList'))->with('success', 'All good!');
+    }
+
+    function exportExcelClients()
+    {
+        return Excel::download(new ClientsExport, 'قائمة الزبائن.xlsx');
     }
 }

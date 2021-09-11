@@ -9,7 +9,8 @@
     @include('includes.requirements')
     @livewireStyles
 </head>
-<body>
+
+<body class="my_bg">
 @include('includes.navbar')
 
 <div class="container-fluid my_mt">
