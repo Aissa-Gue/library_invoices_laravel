@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ClientsExport;
+use App\Imports\ClientsImport;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Validator;
 Use App\Models\Client;
 
@@ -78,4 +81,39 @@ class ClientsController extends Controller
         return redirect(Route('clientsList'));
     }
 
+    public function settingClients()
+    {
+        return view('settings.clients');
+    }
+
+    public function importExcel()
+    {
+        Excel::import(new ClientsImport, request()->file('clients_file'));
+
+        return redirect(Route('clientsList'))->with('success', 'All good!');
+    }
+
+    function exportExcel()
+    {
+        return Excel::download(new ClientsExport, 'قائمة الزبائن.xlsx');
+    }
+
+    /******* TRASHED CLIENTS *******/
+    public function showTrashed(){
+        $trashedClients = Client::onlyTrashed()->get();
+        return view('trash.clients')
+            ->with(compact('trashedClients'));
+    }
+
+    public function restoreTrashed($id){
+        $trashedClient = Client::onlyTrashed()->find($id);
+        $trashedClient->restore();
+        return redirect()->back();
+    }
+
+    public function dropTrashed($id){
+        $trashedClient = Client::onlyTrashed()->find($id);
+        $trashedClient->forceDelete();
+        return redirect()->back();
+    }
 }

@@ -23,7 +23,7 @@
             <div class="col-md-5">
                 <div class="input-group">
                     <span class="input-group-text w-25">الزبون</span>
-                    <input value="{{$order->client->last_name}}" class="form-control" name="client_id" id="client_id"
+                    <input value="{{$order->client->last_name.' '.$order->client->first_name.' بن '.$order->client->father_name}}" class="form-control" name="client_id" id="client_id"
                            placeholder="أدخل اسم الزبون" disabled>
                 </div>
             </div>

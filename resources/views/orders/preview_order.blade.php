@@ -32,6 +32,13 @@
                 <p><strong>المبلغ المدفوع: </strong>{{number_format($order->paid_amount,2)}} دج </p>
             </div>
         </div>
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <p class="text-success fw-bold">
+                    <strong class="text-dark me-2">البائع: </strong> <i class="fas fa-user-shield"></i> {{$order->user->username}}
+                </p>
+            </div>
+        </div>
     </fieldset>
 
     <!-- 3rd row -->

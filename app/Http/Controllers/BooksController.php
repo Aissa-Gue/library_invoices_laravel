@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BooksExport;
+use App\Imports\BooksImport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Validator;
 use App\Models\Book;
 
@@ -83,5 +86,42 @@ class BooksController extends Controller
     {
         Book::find($id)->delete();
         return redirect(Route('booksList'));
+    }
+
+
+    public function settingBooks()
+    {
+        return view('settings.books');
+    }
+
+    public function importExcel()
+    {
+        Excel::import(new BooksImport, request()->file('books_file'));
+
+        return redirect(Route('booksList'))->with('success', 'All good!');
+    }
+
+    function exportExcel()
+    {
+        return Excel::download(new BooksExport, 'قائمة الكتب.xlsx');
+    }
+
+    /******* TRASHED BOOKS *******/
+    public function showTrashed(){
+        $trashedBooks = Book::onlyTrashed()->get();
+        return view('trash.books')
+            ->with(compact('trashedBooks'));
+    }
+
+    public function restoreTrashed($id){
+        $trashedBook = Book::onlyTrashed()->find($id);
+        $trashedBook->restore();
+        return redirect()->back();
+    }
+
+    public function dropTrashed($id){
+        $trashedBook = Book::onlyTrashed()->find($id);
+        $trashedBook->forceDelete();
+        return redirect()->back();
     }
 }

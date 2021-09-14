@@ -134,7 +134,7 @@
                                 @if($debt->debt_amount == null)
                                     <span class="text-danger fw-bold">0.00</span> دج
                                 @else
-                                    <span class="text-danger fw-bold">{{round($debt->debt_amount,2)}}</span> دج
+                                    <span class="text-danger fw-bold">{{number_format($debt->debt_amount,2)}}</span> دج
                                 @endif
                             </td>
                         </tr>

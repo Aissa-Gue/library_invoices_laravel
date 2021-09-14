@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Order;
 use App\Models\Order_Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
@@ -81,7 +82,7 @@ class OrdersController extends Controller
     public function updateRequiredAmount($id)
     {
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
-        Order::where('id',$id)->update(['required_amount' => $total_discountable_price]);
+        Order::where('id', $id)->update(['required_amount' => $total_discountable_price]);
     }
 
     public function showAllData(Request $request)
@@ -149,10 +150,12 @@ class OrdersController extends Controller
     {
         $client = explode(' # ', $request->client_id);
         $request->request->set('client_id', $client[0]);
+        $request->request->set('user_id', Auth::user()->id);
 
         $validated = $request->validate([
             'type' => 'required|alpha',
             'client_id' => 'required|numeric|exists:clients,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'discount_percentage' => 'required|numeric',
         ]);
         $order = Order::Create($validated);
@@ -202,7 +205,7 @@ class OrdersController extends Controller
         $validated = $request->validate([
             'order_id' => 'required|numeric|exists:orders,id',
             'book_id' => 'required|numeric|exists:books,id',
-            'quantity' => 'required|numeric|min:1|max:'.$Current_book->quantity,
+            'quantity' => 'required|numeric|min:1|max:' . $Current_book->quantity,
             'purchase_price' => 'required|numeric',
             'sale_price' => 'required|numeric'
         ]);
@@ -237,5 +240,72 @@ class OrdersController extends Controller
         Order_Book::where('order_id', $id)->delete();
         Order::find($id)->delete();
         return redirect(Route('ordersList'));
+    }
+
+    /******* SALE BY PIECES ******/
+    public function showSale(Request $request)
+    {
+        $book_data = "";
+
+        if ($request->filled('book_id', 'quantity')) {
+
+            //get book info
+            $book = explode(' # ', $request->book_id);
+            $current_book = Book::find($book[0]);
+
+            $book_data = array("book_id" => $book[0],
+                "title" => $book[1],
+                "quantity" => $request->quantity,
+                "salePrice" => $current_book->sale_price,
+                "totalSalePrice" => $current_book->sale_price * $request->quantity);
+        }
+
+        return view('orders.sales.sale')
+            ->with('book_data', $book_data);
+    }
+
+
+    public function updateStock(Request $request)
+    {
+        //get book info
+        $currentBook = Book::find($request->book_id);
+
+        $validated = $request->validate([
+            'book_id' => 'required|numeric|exists:books,id',
+            'quantity' => 'required|numeric|min:1|max:' . $currentBook->quantity,
+        ]);
+
+        //decrement book stock
+        $currentBook->decrement('quantity', $request->quantity);
+
+        $message = "تم بيع " . $request->quantity . " نسخ من كتاب: " . $currentBook->title;
+
+        return view('orders.sales.sale')
+            ->with('message', $message);
+    }
+
+    /******* TRASHED ORDERS *******/
+    public function showTrashed(){
+        $trashedOrders = Order::onlyTrashed()->get();
+        return view('trash.orders')
+            ->with(compact('trashedOrders'));
+    }
+
+    public function restoreTrashed($id){
+        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id',$id);
+        $trashedOrder = Order::onlyTrashed()->find($id);
+
+        $trashedOrderBook->restore();
+        $trashedOrder->restore();
+        return redirect()->back();
+    }
+
+    public function dropTrashed($id){
+        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id',$id);
+        $trashedOrder = Order::onlyTrashed()->find($id);
+
+        $trashedOrderBook->forceDelete();
+        $trashedOrder->forceDelete();
+        return redirect()->back();
     }
 }

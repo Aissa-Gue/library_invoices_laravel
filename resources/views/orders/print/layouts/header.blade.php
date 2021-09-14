@@ -24,13 +24,21 @@
 
 <div class="row justify-content-md-center mb-3">
     <div class="col-sm-5">
-        <h6 class="mb-3"><strong>رقم الفاتورة: </strong>{{$order->id}}</h6>
+        @if($order->type == 'إهداء')
+            <h6 class="mb-3"><strong>رقم الإرسال: </strong>{{$order->id}}</h6>
+        @else
+            <h6 class="mb-3"><strong>رقم الفاتورة: </strong>{{$order->id}}</h6>
+        @endif
         <h6>
             <strong>الزبون: </strong>{{$order->client->last_name . ' ' . $order->client->first_name . ' بن ' . $order->client->father_name}}
         </h6>
     </div>
     <div class="col-sm-5">
-        <h6 class="mb-3"><strong>تاريخ الفاتورة: </strong> {{$order->created_at}}</h6>
+        @if($order->type == 'إهداء')
+            <h6 class="mb-3"><strong>تاريخ الإرسال: </strong> {{$order->created_at}}</h6>
+        @else
+            <h6 class="mb-3"><strong>تاريخ الفاتورة: </strong> {{$order->created_at}}</h6>
+        @endif
         <h6><strong>الهاتف: </strong>0{{$order->client->phone1}} / 0{{$order->client->phone2}}</h6>
     </div>
 </div>

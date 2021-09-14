@@ -27,6 +27,7 @@ class CreateBooksTable extends Migration
             $table->integer('sale_price');
             $table->boolean('discount');
             $table->timestamps();
+            $table->softDeletes();
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';
         });

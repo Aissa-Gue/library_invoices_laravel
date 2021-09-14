@@ -2,24 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\BooksExport;
-use App\Exports\ClientsExport;
-use App\Imports\BooksImport;
-use App\Imports\ClientsImport;
-use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
-
-class SettingsController extends Controller
+class DatabaseController extends Controller
 {
-    //******* Settings  **********//
-
-    ////// Database ///////
     public function show()
     {
-        return view('settings.settings');
+        return view('settings.database');
     }
 
     public function exportDB()
@@ -40,10 +30,10 @@ class SettingsController extends Controller
 
         if (count($output) == 0) {
             echo "<script>alert('تم استخراج قاعدة البيانات بنجاح، تفقد القرص المحلي (D)');</script>";
-            echo "<script> window.location.href= '/settings'</script>";
+            echo "<script> window.location.href= '/settings/database'</script>";
         } else {
             echo "<script>alert('حدثت مشكلة ! لم يتم استخراج قاعدة البيانات ');</script>";
-            echo "<script> window.location.href= '/settings'</script>";
+            echo "<script> window.location.href= '/settings/database'</script>";
         }
     }
 
@@ -99,10 +89,10 @@ class SettingsController extends Controller
             ) {
                 unlink("$file_name");
                 echo "<script>alert('Database imported successfully!')</script>";
-                echo '<script>window.location.href = "/settings"</script>'; // redirect to home.php
+                echo '<script>window.location.href = "/settings/database"</script>'; // redirect to home.php
             } else {
                 echo "<script>alert('Something wrong! database not imported !')</script>";
-                echo '<script>window.location.href = "/settings"</script>'; // redirect to home.php
+                echo '<script>window.location.href = "/settings/database"</script>'; // redirect to home.php
             }
         }
     }
@@ -123,34 +113,6 @@ class SettingsController extends Controller
         }
         DB::statement("SET foreign_key_checks=1");
 
-        return redirect('settings');
-    }
-
-
-    ////// Books ///////
-    public function importExcelBooks()
-    {
-        Excel::import(new BooksImport, request()->file('books_file'));
-
-        return redirect(Route('booksList'))->with('success', 'All good!');
-    }
-
-    function exportExcelBooks()
-    {
-        return Excel::download(new BooksExport, 'قائمة الكتب.xlsx');
-    }
-
-
-    ////// Clients ///////
-    public function importExcelClients()
-    {
-        Excel::import(new ClientsImport, request()->file('clients_file'));
-
-        return redirect(Route('clientsList'))->with('success', 'All good!');
-    }
-
-    function exportExcelClients()
-    {
-        return Excel::download(new ClientsExport, 'قائمة الزبائن.xlsx');
+        return redirect('settings/database');
     }
 }

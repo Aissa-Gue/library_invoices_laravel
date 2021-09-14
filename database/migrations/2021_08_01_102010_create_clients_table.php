@@ -22,6 +22,7 @@ class CreateClientsTable extends Migration
             $table->integer('phone1')->unique();
             $table->integer('phone2')->unique()->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';
         });
