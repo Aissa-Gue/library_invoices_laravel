@@ -112,8 +112,17 @@ class ClientsController extends Controller
     }
 
     public function dropTrashed($id){
-        $trashedClient = Client::onlyTrashed()->find($id);
-        $trashedClient->forceDelete();
-        return redirect()->back();
+        //test if client has orders
+        $clientOrders = Order::where('client_id',$id)->get();
+
+        if($clientOrders->isEmpty()){
+            $trashedClient = Client::onlyTrashed()->find($id);
+            $trashedClient->forceDelete();
+            return redirect()->back();
+        }else{
+            $deleteProblem = 'لا يمكنك حذف الزبون لوجود فواتير مرتبطة به';
+            return redirect()->back()->with(compact('deleteProblem'));
+        }
+
     }
 }

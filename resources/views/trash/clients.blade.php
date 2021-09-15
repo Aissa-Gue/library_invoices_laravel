@@ -23,9 +23,36 @@
                 </tr>
                 </thead>
                 <tbody>
+                @if(session()->has('deleteProblem'))
+                    <script>
+                        $(document).ready(function(){
+                            $('#msgModal').modal("show");
+                        });
+                    </script>
+                    <!-- Modal -->
+                    <div class="modal fade" id="msgModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">حذف الزبون</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center text-danger">
+                                    <i class="fas fa-exclamation-triangle fs-1 mb-4"></i>
+                                    <h5>{{session()->get('deleteProblem')}}</h5>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 @if($trashedClients->isEmpty())
                     <tr class="fw-bold text-center text-danger">
-                        <td colspan="6" class="py-4"><i class="fas fa-exclamation-triangle fs-4 mb-3"></i><br>  لا يوجد زبائن محذوفين !</td>
+                        <td colspan="6" class="py-4"><i class="fas fa-exclamation-triangle fs-4 mb-3"></i><br> لا يوجد
+                            زبائن محذوفين !
+                        </td>
                     </tr>
                 @endif
                 @foreach($trashedClients as $trashedClient)

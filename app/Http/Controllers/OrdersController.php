@@ -92,13 +92,26 @@ class OrdersController extends Controller
         $type = $request->get('type');
         $order_id = $request->get('order_id');
 
-        $orders = Order::join('clients', 'clients.id', '=', 'orders.client_id')
-            ->where('last_name', 'LIKE', '%' . $lname . '%')
-            ->where('first_name', 'LIKE', '%' . $fname . '%')
-            ->where('type', 'LIKE', '%' . $type . '%')
-            ->where('orders.id', 'LIKE', '%' . $order_id)
-            ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.created_at', 'last_name', 'first_name', 'father_name')
-            ->paginate(15);
+        //if role is [ADMIN] show all orders else show only [USER] orders
+        if (Auth::user()->role == 'admin') {
+            $orders = Order::join('clients', 'clients.id', '=', 'orders.client_id')
+                ->where('last_name', 'LIKE', '%' . $lname . '%')
+                ->where('first_name', 'LIKE', '%' . $fname . '%')
+                ->where('type', 'LIKE', '%' . $type . '%')
+                ->where('orders.id', 'LIKE', '%' . $order_id)
+                ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.created_at', 'last_name', 'first_name', 'father_name')
+                ->paginate(15);
+
+        } elseif (Auth::user()->role == 'seller') {
+            $orders = Order::join('clients', 'clients.id', '=', 'orders.client_id')
+                ->where('last_name', 'LIKE', '%' . $lname . '%')
+                ->where('first_name', 'LIKE', '%' . $fname . '%')
+                ->where('type', 'LIKE', '%' . $type . '%')
+                ->where('orders.id', 'LIKE', '%' . $order_id)
+                ->where('user_id', Auth::id())
+                ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.created_at', 'last_name', 'first_name', 'father_name')
+                ->paginate(15);
+        }
 
 
         return view('orders.orders_list')->with('orders', $orders);
@@ -285,14 +298,16 @@ class OrdersController extends Controller
     }
 
     /******* TRASHED ORDERS *******/
-    public function showTrashed(){
+    public function showTrashed()
+    {
         $trashedOrders = Order::onlyTrashed()->get();
         return view('trash.orders')
             ->with(compact('trashedOrders'));
     }
 
-    public function restoreTrashed($id){
-        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id',$id);
+    public function restoreTrashed($id)
+    {
+        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id', $id);
         $trashedOrder = Order::onlyTrashed()->find($id);
 
         $trashedOrderBook->restore();
@@ -300,8 +315,9 @@ class OrdersController extends Controller
         return redirect()->back();
     }
 
-    public function dropTrashed($id){
-        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id',$id);
+    public function dropTrashed($id)
+    {
+        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id', $id);
         $trashedOrder = Order::onlyTrashed()->find($id);
 
         $trashedOrderBook->forceDelete();

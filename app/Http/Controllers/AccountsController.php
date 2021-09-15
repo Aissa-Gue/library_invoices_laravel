@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -142,8 +143,17 @@ class AccountsController extends Controller
     }
 
     public function dropTrashed($id){
-        $trashedUser = User::onlyTrashed()->find($id);
-        $trashedUser->forceDelete();
-        return redirect()->back();
+        //test if user has orders
+        $userOrders = Order::where('user_id',$id)->get();
+
+        if($userOrders->isEmpty()){
+            $trashedUser = User::onlyTrashed()->find($id);
+            $trashedUser->forceDelete();
+            return redirect()->back();
+        }else{
+            $deleteProblem = 'لا يمكنك حذف المستخدم لوجود فواتير مرتبطة به';
+            return redirect()->back()->with(compact('deleteProblem'));
+        }
+
     }
 }
