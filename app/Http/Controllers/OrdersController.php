@@ -113,7 +113,6 @@ class OrdersController extends Controller
                 ->paginate(15);
         }
 
-
         return view('orders.orders_list')->with('orders', $orders);
     }
 
@@ -125,6 +124,12 @@ class OrdersController extends Controller
         $total_purchase_price = $this->calculate($id)['total_purchase_price'];
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
+
+        //redirect if the seller try to access to other sellers orders
+        $role = Auth::user()->role;
+        if($role == 'seller' and $order->user_id != Auth::id()) {
+            return redirect()->back();
+        }
 
         return view('orders.preview_order')
             ->with(compact('order', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price'));
@@ -138,6 +143,12 @@ class OrdersController extends Controller
         $total_purchase_price = $this->calculate($id)['total_purchase_price'];
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
+
+        //redirect if the seller try to access to other sellers orders
+        $role = Auth::user()->role;
+        if($role == 'seller' and $order->user_id != Auth::id()) {
+            return redirect()->back();
+        }
 
         if ($order->type == 'إهداء') {
             if ($req->invoice == 'seller') {
@@ -195,6 +206,12 @@ class OrdersController extends Controller
         $total_purchase_price = $this->calculate($id)['total_purchase_price'];
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
+
+        //redirect if the seller try to access to other sellers orders
+        $role = Auth::user()->role;
+        if($role == 'seller' and $order->user_id != Auth::id()) {
+            return redirect()->back();
+        }
 
         return view('orders.edit_order')
             ->with(compact('order', 'orderBooks', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price'));

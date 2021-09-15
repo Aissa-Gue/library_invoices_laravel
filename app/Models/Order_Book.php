@@ -22,12 +22,12 @@ class Order_Book extends Model
     // belongsTo => foreign key here
     public function book()
     {
-        return $this->belongsTo(Book::class, 'book_id', 'id');
+        return $this->belongsTo(Book::class, 'book_id', 'id')->withTrashed();
     }
 
     public function order()
     {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id')->withTrashed();
     }
 
 }

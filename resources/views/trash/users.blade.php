@@ -6,11 +6,12 @@
     <!-------- USERS SECTION ---------->
     <div class="row mt-3">
         <div class="col-md-12">
-            <h4><i class="fas fa-user-shield"></i> المستخدمين المحذوفين</h4>
-            <hr>
+            <div class="alert alert-danger text-center" role="alert">
+                <h5><i class="fas fa-user-shield"></i> المستخدمين المحذوفين</h5>
+            </div>
         </div>
 
-        <div class="col-md-9">
+        <div class="col-md-12">
             <table class="table table-hover">
                 <thead>
                 <tr class="text-secondary">

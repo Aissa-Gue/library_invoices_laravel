@@ -6,8 +6,9 @@
     <!-------- CLIENTS SECTION ---------->
     <div class="row mt-3">
         <div class="col-md-12">
-            <h4><i class="fas fa-user"></i> الزبائن المحذوفين</h4>
-            <hr>
+            <div class="alert alert-danger text-center" role="alert">
+                <h5><i class="fas fa-user"></i> الزبائن المحذوفين</h5>
+            </div>
         </div>
 
         <div class="col-md-12">

@@ -24,6 +24,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class)->withTrashed();
+    }
     /**
      * The attributes that should be hidden for arrays.
      *
