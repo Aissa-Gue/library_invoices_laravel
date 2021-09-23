@@ -52,11 +52,15 @@
                 <tbody>
                 <tr class="row py-1">
                     <th class="col-md-5">عدد الفواتير:</th>
-                    <td class="col-md-6">{{$details->total_orders}}</td>
+                    <td class="col-md-6 text-primary fw-bold">{{$details->total_orders}}</td>
                 </tr>
                 <tr class="row py-1">
-                    <th class="col-md-5">المبلغ الإجمالي:</th>
-                    <td class="col-md-6">{{number_format($details->total_amount,2)}} دج </td>
+                    <th class="col-md-5">مجموع الفواتير:</th>
+                    <td class="col-md-6 text-success fw-bold">{{number_format($details->total_required_amount,2)}} دج</td>
+                </tr>
+                <tr class="row py-1">
+                    <th class="col-md-5">مجموع الديون:</th>
+                    <td class="col-md-6 text-danger fw-bold">{{number_format($details->total_debts,2)}} دج</td>
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-5">تاريخ الإنشاء:</th>
@@ -69,8 +73,10 @@
                 <tr class="row mt-4">
                     <td class="col-md-11 text-center">
                         <a href="{{route('editClient', $client->id)}}" class="btn btn-primary px-4">تعديل</a>
-                        <a href="{{route('deleteClient', $client->id)}}" class="btn btn-danger px-4"
-                           onclick="return confirm('هل أنت متأكد؟')">حذف</a>
+                        @if(Auth::user()->role == 'admin')
+                            <a href="{{route('deleteClient', $client->id)}}" class="btn btn-danger px-4"
+                               onclick="return confirm('هل أنت متأكد؟')">حذف</a>
+                        @endif
                     </td>
                 </tr>
                 </tbody>

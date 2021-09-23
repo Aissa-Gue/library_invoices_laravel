@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    @include('settings.navigation')
+    @include('includes.navbars.settings.navigation')
 
     <!-------- CLIENTS SECTION ---------->
     <div class="row mt-3">

@@ -1,6 +1,9 @@
 @extends('layouts.master')
 
 @section('content')
+    @if(Auth::user()->role == 'admin')
+        @include('includes.navbars.clients-providers.navigation_list')
+    @endif
     <div class="alert alert-primary text-center" role="alert">
         <h4>قائمة الزبائن</h4>
     </div>
@@ -15,7 +18,7 @@
                     <span class="input-group-text">الاسم</span>
                     <input type="text" name="first_name" class="form-control"
                            placeholder="أدخل الإسم" value="{{request('first_name')}}">
-                    <button class="btn btn-primary" name="bookSearch" type="submit">بحث</button>
+                    <button class="btn btn-primary" type="submit">بحث</button>
                 </div>
 
             </form>
@@ -32,12 +35,14 @@
             <tr>
                 <th scope="col" class="text-center">رقم الزبون</th>
                 <th scope="col">اسم الزبون</th>
-                <th scope="col">العنون</th>
+                <th scope="col">العنوان</th>
                 <th scope="col" class="text-center">رقم الهاتف 1</th>
-                <th scope="col" class="text-center">رقم الهاتف 2</th>
+                <th scope="col" class="text-center">إضافة فاتورة</th>
                 <th scope="col" class="text-center">تفاصيل</th>
                 <th scope="col" class="text-center">تعديل</th>
-                <th scope="col" class="text-center">حذف</th>
+                @if(Auth::user()->role == 'admin')
+                    <th scope="col" class="text-center">حذف</th>
+                @endif
             </tr>
             </thead>
             <tbody>
@@ -55,7 +60,17 @@
                     <td>{{$client->last_name .' '. $client->first_name .' بن '.$client->father_name}}</td>
                     <td>{{$client->address}}</td>
                     <td class="text-center">0{{$client->phone1}}</td>
-                    <td class="text-center">0{{$client->phone2}}</td>
+
+                    <td class="text-center">
+                        <a class="btn btn-outline-dark"
+                           href="{{URL('orders/add/'.$client->id)}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-bookmark-plus-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm6.5-11a.5.5 0 0 0-1 0V6H6a.5.5 0 0 0 0 1h1.5v1.5a.5.5 0 0 0 1 0V7H10a.5.5 0 0 0 0-1H8.5V4.5z"/>
+                            </svg>
+                        </a>
+                    </td>
 
                     <td class="text-center">
                         <a class="btn btn-outline-success"
@@ -80,15 +95,17 @@
                     </td>
 
                     <td class="text-center">
-                        <a class="btn btn-outline-danger"
-                           href="{{route('deleteClient', $client->id)}}"
-                           onclick="return confirm('هل أنت متأكد؟')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                 fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                            </svg>
-                        </a>
+                        @if(Auth::user()->role == 'admin')
+                            <a class="btn btn-outline-danger"
+                               href="{{route('deleteClient', $client->id)}}"
+                               onclick="return confirm('هل أنت متأكد؟')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                </svg>
+                            </a>
+                        @endif
                     </td>
                 </tr>
             @endforeach

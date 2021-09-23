@@ -16,10 +16,11 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->references('id')->on('clients');
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('created_by')->references('id')->on('users');
+            $table->foreignId('updated_by')->references('id')->on('users');
             $table->string('type',10);
-            $table->integer('discount_percentage');
-            $table->float('paid_amount');
+            $table->decimal('discount_percentage',3,0)->default(0);
+            $table->float('paid_amount')->default(0);
             $table->float('required_amount');
             $table->timestamps();
             $table->softDeletes();

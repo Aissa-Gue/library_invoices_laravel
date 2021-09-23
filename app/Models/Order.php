@@ -13,7 +13,8 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
-        'user_id',
+        'created_by',
+        'updated_by',
         'type',
         'discount_percentage',
         'paid_amount'
@@ -24,9 +25,15 @@ class Order extends Model
     {
         return $this->belongsTo(Client::class)->withTrashed();
     }
-    public function user()
+
+    public function createdBy()
     {
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class,'created_by','id')->withTrashed();
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class,'updated_by','id')->withTrashed();
     }
 
 }

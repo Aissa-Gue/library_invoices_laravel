@@ -20,8 +20,8 @@ class Book extends Model
         'publication_year',
         'edition',
         'quantity',
+        'sale_percentage',
         'purchase_price',
-        'sale_price',
         'discount',
     ];
 

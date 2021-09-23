@@ -117,11 +117,19 @@
                             <div class="form-text text-danger">{{$message}}</div>
                             @enderror
                         </div>
+
                         <div class="col-md-6">
-                            <label class="form-label" for="sale_price">سعر البيع</label>
-                            <input type="number" class="form-control" name="sale_price" id="sale_price"
-                                   placeholder="أدخل سعر البيع" value="{{old('sale_price') ?? $book->sale_price}}">
-                            @error('sale_price')
+                            <label class="form-label" for="sale_percentage">نسبة البيع</label>
+                            <select name="sale_percentage" class="form-control text-center" id="sale_percentage">
+                                <option>- اختر نسبة مئوية -</option>
+                                <option value="0" @if($book->sale_percentage == 0) {{'selected'}} @endif>0%</option>
+                                <option value="10" @if($book->sale_percentage == 10) {{'selected'}} @endif>10%</option>
+                                <option value="15" @if($book->sale_percentage == 15) {{'selected'}} @endif>15%</option>
+                                <option value="20" @if($book->sale_percentage == 20) {{'selected'}} @endif>20%</option>
+                                <option value="25" @if($book->sale_percentage == 25) {{'selected'}} @endif>25%</option>
+                                <option value="30" @if($book->sale_percentage == 30) {{'selected'}} @endif>30%</option>
+                            </select>
+                            @error('sale_percentage')
                             <div class="form-text text-danger">{{$message}}</div>
                             @enderror
                         </div>
@@ -133,7 +141,6 @@
                 </button>
             </div>
         </fieldset>
-
     </form>
 
 @stop

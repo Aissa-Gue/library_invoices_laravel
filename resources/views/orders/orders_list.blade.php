@@ -1,9 +1,12 @@
 @extends('layouts.master')
 
 @section('content')
+    @if(Auth::user()->role == 'admin')
+        @include('includes.navbars.orders-purchases.navigation_list')
+    @endif
 
     <div class="alert alert-primary text-center" role="alert">
-        <h4>قائمة الفواتير</h4>
+        <h4>قائمة فواتير الزبائن</h4>
     </div>
 
     <form action="{{Route('ordersList')}}" method="get">
@@ -25,8 +28,10 @@
                                 <option value="" selected>-- اختر نوع الفاتورة --</option>
                                 <option value="بيع" @if(request('type') == 'بيع') {{'selected'}} @endif>بيع</option>
                                 <option value="معرض" @if(request('type') == 'معرض') {{'selected'}} @endif>معرض</option>
-                                <option value="إهداء" @if(request('type') == 'إهداء') {{'selected'}} @endif>إهداء
-                                </option>
+                                @if(Auth::user()->role == 'admin')
+                                    <option value="إهداء" @if(request('type') == 'إهداء') {{'selected'}} @endif>إهداء
+                                    </option>
+                                @endif
                             </select>
                         </div>
                     </div>
@@ -60,6 +65,7 @@
     <table class="table table-hover">
         <thead>
         <tr>
+            <th scope="col" class="text-center"><i class="fas fa-radiation text-secondary fs-5"></i></th>
             <th scope="col" class="text-center">رقم الفاتورة</th>
             <th scope="col">تاريخ الفاتورة</th>
             <th scope="col">الزبون</th>
@@ -67,7 +73,9 @@
             <th scope="col" class="text-center">نسبة التخفيض</th>
             <th scope="col" class="text-center">تفاصيل</th>
             <th scope="col" class="text-center">تعديل</th>
-            <th scope="col" class="text-center">حذف</th>
+            @if(Auth::user()->role == 'admin')
+                <th scope="col" class="text-center">حذف</th>
+            @endif
         </tr>
         </thead>
         <tbody>
@@ -82,6 +90,15 @@
 
         @foreach($orders as $order)
             <tr>
+                <th scope="row" class="text-center fs-5">
+                    @if($order->required_amount == $order->paid_amount)
+                        <i class="fas fa-shield-check text-success"></i>
+                    @elseif($order->required_amount > $order->paid_amount and $order->paid_amount == 0)
+                        <i class="fas fa-times-circle text-danger"></i>
+                    @elseif($order->required_amount > $order->paid_amount)
+                        <i class="fas fa-exclamation-circle text-warning"></i>
+                    @endif
+                </th>
                 <th scope="row" class="text-center">{{$order->id}}</th>
                 <td>{{$order->created_at}}</td>
                 <td>{{$order->last_name.' '.$order->first_name.' بن '.$order->father_name}}
@@ -112,22 +129,23 @@
                         </svg>
                     </a>
                 </td>
-
-                <td class="text-center">
-                    <form action="{{route('deleteOrder', $order->id)}}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-outline-danger"
-                                type="submit"
-                                onclick="return confirm('هل أنت متأكد؟')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                 fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                            </svg>
-                        </button>
-                    </form>
-                </td>
+                @if(Auth::user()->role == 'admin')
+                    <td class="text-center">
+                        <form action="{{route('deleteOrder', $order->id)}}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-outline-danger"
+                                    type="submit"
+                                    onclick="return confirm('هل أنت متأكد؟')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+                @endif
             </tr>
 
         @endforeach

@@ -58,6 +58,16 @@
                     @enderror
                 </div>
             </div>
+
+            @if(session()->has('paidAmountAlert'))
+                <div class="alert alert-danger alert-dismissible d-flex align-items-center fw-bold mt-3" role="alert">
+                    <i class="fas fa-times-circle me-2 fs-5"></i>
+                    <div>
+                        {{session()->get('paidAmountAlert')}}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
         </form>
 
         <div class="row mt-3">

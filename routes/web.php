@@ -27,8 +27,43 @@ Auth::routes([
 
 Route::group(['middleware' => ['auth', 'admin']], function () {
 
-    /********* Alerts and statistics [home] *********/
-    Route::get('/', '\App\Http\Controllers\Controller@index')->name('home');
+    /********* Dashboard [home] *********/
+
+    Route::get('/', '\App\Http\Controllers\DashboardController@index')->name('home');
+    Route::get('/dashboard/clientsDebts', '\App\Http\Controllers\DashboardController@clientsDebts')->name('clientsDebts');
+    Route::get('/dashboard/providersDebts', '\App\Http\Controllers\DashboardController@providersDebts')->name('providersDebts');
+    Route::get('/dashboard/stockAlerts', '\App\Http\Controllers\DashboardController@stockAlerts')->name('stockAlerts');
+
+    /********* PROVIDERS *********/
+
+    Route::get('providers/add', '\App\Http\Controllers\ProvidersController@add')->name('addProvider');
+    Route::post('providers/add', '\App\Http\Controllers\ProvidersController@store')->name('addProvider');
+
+    Route::get('providers/list', '\App\Http\Controllers\ProvidersController@showAllData')->name('providersList');
+    Route::get('providers/preview/{id}', '\App\Http\Controllers\ProvidersController@show')->name('previewProvider');
+
+    Route::get('providers/edit/{id}', '\App\Http\Controllers\ProvidersController@edit')->name('editProvider');
+    Route::post('providers/edit/{id}', '\App\Http\Controllers\ProvidersController@update')->name('editProvider');
+
+    Route::get('providers/delete/{id}', '\App\Http\Controllers\ProvidersController@destroy')->name('deleteProvider');
+
+
+    /******** PURCHASES ********/
+
+    Route::get('purchases/add/{provider_id?}', '\App\Http\Controllers\PurchasesController@add')->name('addPurchase');
+    Route::post('purchases/add', '\App\Http\Controllers\PurchasesController@store')->name('addPurchase');
+    Route::post('purchases/addBook/{id}', '\App\Http\Controllers\PurchasesController@storeBook')->name('addPurchaseBook');
+
+    Route::get('purchases/list', '\App\Http\Controllers\PurchasesController@showAllData')->name('purchasesList');
+    Route::get('purchases/preview/{id}', '\App\Http\Controllers\PurchasesController@show')->name('previewPurchase');
+    Route::get('purchases/print/{id}', '\App\Http\Controllers\PurchasesController@print')->name('printPurchase');
+
+    Route::get('purchases/edit/{id}', '\App\Http\Controllers\PurchasesController@edit')->name('editPurchase');
+    Route::post('purchases/edit/{id}', '\App\Http\Controllers\PurchasesController@update')->name('editPurchase');
+    Route::post('purchases/edit/salePercentage/{id}', '\App\Http\Controllers\PurchasesController@updateSalePercentage')->name('editSalePercentage');
+
+    Route::delete('purchases/delete/{id}/{book_id}', '\App\Http\Controllers\PurchasesController@destroyBook')->name('deletePurchaseBook');
+    Route::delete('purchases/delete/{id}', '\App\Http\Controllers\PurchasesController@destroy')->name('deletePurchase');
 
 
     /********* Settings *********/
@@ -48,15 +83,20 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('settings/importExcelClients', '\App\Http\Controllers\ClientsController@importExcel')->name('importExcelClients');
     Route::get('settings/exportExcelClients', '\App\Http\Controllers\ClientsController@exportExcel')->name('exportExcelClients');
 
+//Providers
+    Route::get('settings/providers', '\App\Http\Controllers\ProvidersController@settingProviders')->name('settingsProviders');
+    Route::post('settings/importExcelProviders', '\App\Http\Controllers\ProvidersController@importExcel')->name('importExcelProviders');
+    Route::get('settings/exportExcelProviders', '\App\Http\Controllers\ProvidersController@exportExcel')->name('exportExcelProviders');
+
 //Accounts
-    Route::get('settings/accounts/add', '\App\Http\Controllers\AccountsController@showAdd')->name('settingsAddAccount');
-    Route::post('settings/accounts/add', '\App\Http\Controllers\AccountsController@store')->name('createAccount');
+    Route::get('settings/accounts/add', '\App\Http\Controllers\UsersController@showAdd')->name('settingsAddAccount');
+    Route::post('settings/accounts/add', '\App\Http\Controllers\UsersController@store')->name('createAccount');
 
-    Route::get('settings/accounts/edit', '\App\Http\Controllers\AccountsController@showEdit')->name('settingsEditAccount');
-    Route::post('settings/accounts/edit', '\App\Http\Controllers\AccountsController@update')->name('updateAccount');
+    Route::get('settings/accounts/edit', '\App\Http\Controllers\UsersController@showEdit')->name('settingsEditAccount');
+    Route::post('settings/accounts/edit', '\App\Http\Controllers\UsersController@update')->name('updateAccount');
 
-    Route::get('settings/accounts/delete', '\App\Http\Controllers\AccountsController@showDelete')->name('settingsDeleteAccount');
-    Route::delete('settings/accounts/delete', '\App\Http\Controllers\AccountsController@destroy')->name('deleteAccount');
+    Route::get('settings/accounts/delete', '\App\Http\Controllers\UsersController@showDelete')->name('settingsDeleteAccount');
+    Route::delete('settings/accounts/delete', '\App\Http\Controllers\UsersController@destroy')->name('deleteAccount');
 
     /********* Trash *********/
 
@@ -70,15 +110,25 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('trash/clients/restore/{id}', '\App\Http\Controllers\ClientsController@restoreTrashed')->name('restoreTrashedClient');
     Route::delete('trash/clients/delete/{id}', '\App\Http\Controllers\ClientsController@dropTrashed')->name('deleteTrashedClient');
 
+//Providers
+    Route::get('trash/providers', '\App\Http\Controllers\ProvidersController@showTrashed')->name('trashedProviders');
+    Route::post('trash/providers/restore/{id}', '\App\Http\Controllers\ProvidersController@restoreTrashed')->name('restoreTrashedProvider');
+    Route::delete('trash/providers/delete/{id}', '\App\Http\Controllers\ProvidersController@dropTrashed')->name('deleteTrashedProvider');
+
 //Orders
     Route::get('trash/orders', '\App\Http\Controllers\OrdersController@showTrashed')->name('trashedOrders');
     Route::post('trash/orders/restore/{id}', '\App\Http\Controllers\OrdersController@restoreTrashed')->name('restoreTrashedOrder');
     Route::delete('trash/orders/delete/{id}', '\App\Http\Controllers\OrdersController@dropTrashed')->name('deleteTrashedOrder');
 
+//Purchases
+    Route::get('trash/purchases', '\App\Http\Controllers\PurchasesController@showTrashed')->name('trashedPurchases');
+    Route::post('trash/purchases/restore/{id}', '\App\Http\Controllers\PurchasesController@restoreTrashed')->name('restoreTrashedPurchase');
+    Route::delete('trash/purchases/delete/{id}', '\App\Http\Controllers\PurchasesController@dropTrashed')->name('deleteTrashedPurchase');
+
 //Users
-    Route::get('trash/users', '\App\Http\Controllers\AccountsController@showTrashed')->name('trashedUsers');
-    Route::post('trash/users/restore/{id}', '\App\Http\Controllers\AccountsController@restoreTrashed')->name('restoreTrashedUser');
-    Route::delete('trash/users/delete/{id}', '\App\Http\Controllers\AccountsController@dropTrashed')->name('deleteTrashedUser');
+    Route::get('trash/users', '\App\Http\Controllers\UsersController@showTrashed')->name('trashedUsers');
+    Route::post('trash/users/restore/{id}', '\App\Http\Controllers\UsersController@restoreTrashed')->name('restoreTrashedUser');
+    Route::delete('trash/users/delete/{id}', '\App\Http\Controllers\UsersController@dropTrashed')->name('deleteTrashedUser');
 
 });
 
@@ -109,13 +159,14 @@ Route::post('clients/edit/{id}', '\App\Http\Controllers\ClientsController@update
 
 Route::get('clients/delete/{id}', '\App\Http\Controllers\ClientsController@destroy')->name('deleteClient');
 
-/******** Orders ********/
+
+/******** ORDERS ********/
 //sales
 Route::get('orders/sales/add', '\App\Http\Controllers\OrdersController@showSale')->name('addSale');
 Route::post('orders/sales/add', '\App\Http\Controllers\OrdersController@updateStock')->name('updateStock');
 
 //orders
-Route::get('orders/add', '\App\Http\Controllers\OrdersController@add')->name('addOrder');
+Route::get('orders/add/{client_id?}', '\App\Http\Controllers\OrdersController@add')->name('addOrder');
 Route::post('orders/add', '\App\Http\Controllers\OrdersController@store')->name('addOrder');
 Route::post('orders/addBook/{id}', '\App\Http\Controllers\OrdersController@storeBook')->name('addOrderBook');
 
@@ -128,6 +179,4 @@ Route::post('orders/edit/{id}', '\App\Http\Controllers\OrdersController@update')
 
 Route::delete('orders/delete/{id}/{book_id}', '\App\Http\Controllers\OrdersController@destroyBook')->name('deleteOrderBook');
 Route::delete('orders/delete/{id}', '\App\Http\Controllers\OrdersController@destroy')->name('deleteOrder');
-
-
 

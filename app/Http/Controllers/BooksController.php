@@ -19,6 +19,7 @@ class BooksController extends Controller
 
         $books = Book::where('title', 'LIKE', '%' . $title . '%')
             ->where('author', 'LIKE', '%' . $author . '%')
+            ->orderBy('title', 'ASC')
             ->paginate(15);
 
         return view('books.books_list')->with('books', $books);
@@ -49,8 +50,8 @@ class BooksController extends Controller
             'edition' => 'string',
             'quantity' => 'required|numeric',
             'purchase_price' => 'required|numeric',
-            'sale_price' => 'required|numeric',
-            'discount' => 'required|numeric',
+            'sale_percentage' => 'required|numeric|min:0|max:30',
+            'discount' => 'required|numeric|min:0|max:100',
         ]);
 
         $book = Book::Create($validated);
@@ -75,8 +76,8 @@ class BooksController extends Controller
             'edition' => 'string',
             'quantity' => 'required|numeric',
             'purchase_price' => 'required|numeric',
-            'sale_price' => 'required|numeric',
-            'discount' => 'required|numeric',
+            'sale_percentage' => 'required|numeric|min:0|max:30',
+            'discount' => 'required|numeric|min:0|max:100',
         ]);
 
         $book = Book::find($id)->Update($validated);
@@ -109,7 +110,7 @@ class BooksController extends Controller
 
     /******* TRASHED BOOKS *******/
     public function showTrashed(){
-        $trashedBooks = Book::onlyTrashed()->get();
+        $trashedBooks = Book::onlyTrashed()->paginate(15);
         return view('trash.books')
             ->with(compact('trashedBooks'));
     }

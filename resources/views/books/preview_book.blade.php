@@ -66,18 +66,24 @@
                     </td>
                 </tr>
                 <tr class="row py-1">
+                    <th class="col-md-5">نسبة البيع:</th>
+                    <td class="col-md-6">{{$book->sale_percentage}} %</td>
+                </tr>
+                <tr class="row py-1">
                     <th class="col-md-5">سعر الشراء:</th>
-                    <td class="col-md-6">{{$book->purchase_price}}.00  دج</td>
+                    <td class="col-md-6">{{$book->purchase_price}}.00 دج</td>
                 </tr>
                 <tr class="row py-1">
                     <th class="col-md-5">سعر البيع:</th>
-                    <td class="col-md-6">{{$book->sale_price}}.00 دج</td>
+                    <td class="col-md-6">{{$book->purchase_price + ($book->purchase_price * $book->sale_percentage / 100)}}.00 دج</td>
                 </tr>
                 <tr class="row mt-4">
                     <td class="col-md-11 text-center">
                         <a href="{{route('editBook', $book->id)}}" class="btn btn-primary px-4">تعديل</a>
-                        <a href="{{route('deleteBook', $book->id)}}" class="btn btn-danger px-4"
-                           onclick="return confirm('هل أنت متأكد؟')">حذف</a>
+                        @if(Auth::user()->role == 'admin')
+                            <a href="{{route('deleteBook', $book->id)}}" class="btn btn-danger px-4"
+                               onclick="return confirm('هل أنت متأكد؟')">حذف</a>
+                        @endif
                     </td>
                 </tr>
                 </tbody>

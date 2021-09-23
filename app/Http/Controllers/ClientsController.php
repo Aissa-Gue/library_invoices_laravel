@@ -19,6 +19,7 @@ class ClientsController extends Controller
 
         $clients = Client::where('last_name', 'LIKE', '%' . $last_name . '%')
             ->where('first_name', 'LIKE', '%' . $first_name . '%')
+            ->orderBy('created_at', 'DESC')
             ->paginate(15);
 
         return view('clients.clientsList')->with('clients', $clients);
@@ -26,9 +27,10 @@ class ClientsController extends Controller
 
     public function show($id)
     {
-        $client = Client::findOrFail($id);
+        $client = Client::withTrashed()->findOrFail($id);
         $details = Order::where('client_id',$id)
-            ->select(DB::raw('COUNT(*) as total_orders, SUM(required_amount) as total_amount'))
+            ->select(DB::raw('COUNT(*) as total_orders, SUM(required_amount) as total_required_amount'),
+                DB::raw('sum(required_amount - paid_amount) As total_debts'))
             ->first();
 
         return view('clients.preview_client')
@@ -45,7 +47,7 @@ class ClientsController extends Controller
             'last_name' => 'required',
             'first_name' => 'required',
             'father_name' => 'required',
-            'address' => 'required',
+            'address' => 'nullable',
             'phone1' => 'required|numeric|unique:clients',
             'phone2' => 'nullable|numeric|unique:clients',
         ]);
@@ -67,7 +69,7 @@ class ClientsController extends Controller
             'last_name' => 'alpha|required',
             'first_name' => 'alpha|required',
             'father_name' => 'alpha|required',
-            'address' => 'required',
+            'address' => 'nullable',
             'phone1' => 'required|numeric|unique:clients,phone1,'.$id,
             'phone2' => 'nullable|numeric|unique:clients,phone2,'.$id,
         ]);
@@ -100,7 +102,7 @@ class ClientsController extends Controller
 
     /******* TRASHED CLIENTS *******/
     public function showTrashed(){
-        $trashedClients = Client::onlyTrashed()->get();
+        $trashedClients = Client::onlyTrashed()->paginate(15);
         return view('trash.clients')
             ->with(compact('trashedClients'));
     }

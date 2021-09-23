@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    @include('trash.navigation')
+    @include('includes.navbars.trash.navigation')
 
     <!-------- CLIENTS SECTION ---------->
     <div class="row mt-3">
@@ -95,8 +95,12 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="row justify-content-center fixed-bottom">
+                <div class="offset-2 col-md-auto">
+                    {{$trashedClients->links()}}
+                </div>
+            </div>
         </div>
-
     </div>
     <!-------- END CLIENTS SECTION ---------->
 

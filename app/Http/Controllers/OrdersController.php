@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Client;
 use App\Models\Order;
-use App\Models\Order_Book;
+use App\Models\OrderBook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,30 +16,30 @@ class OrdersController extends Controller
     public function calculate($id)
     {
         $order = Order::findOrFail($id);
-        $orderBooks = Order_Book::where('order_id', $id)->get();
+        $orderBooks = OrderBook::where('order_id', $id)->get();
 
-        $discBooks = DB::table("order__books")
+        $discBooks = DB::table("order_books")
             ->Join("books", function ($join) {
-                $join->on("books.id", "=", "order__books.book_id");
+                $join->on("books.id", "=", "order_books.book_id");
             })
-            ->select(DB::raw('sum(order__books.quantity * order__books.purchase_price) As purchase_price_sum'),
-                DB::raw('sum(order__books.quantity * order__books.sale_price) As sale_price_sum'),
-                DB::raw('sum(order__books.quantity) As quantity'))
-            ->where("order__books.order_id", "=", $id)
+            ->select(DB::raw('sum(order_books.quantity * order_books.purchase_price) As purchase_price_sum'),
+                DB::raw('sum(order_books.quantity * order_books.sale_price) As sale_price_sum'),
+                DB::raw('sum(order_books.quantity) As quantity'))
+            ->where("order_books.order_id", "=", $id)
             ->where("books.discount", "=", 1)
-            ->groupBy("order__books.order_id")
+            ->groupBy("order_books.order_id")
             ->first();
 
-        $NonDiscBooks = DB::table("order__books")
+        $NonDiscBooks = DB::table("order_books")
             ->Join("books", function ($join) {
-                $join->on("books.id", "=", "order__books.book_id");
+                $join->on("books.id", "=", "order_books.book_id");
             })
-            ->select(DB::raw('sum(order__books.quantity * order__books.purchase_price) As purchase_price_sum'),
-                DB::raw('sum(order__books.quantity * order__books.sale_price) As sale_price_sum'),
-                DB::raw('sum(order__books.quantity) As quantity'))
-            ->where("order__books.order_id", "=", $id)
+            ->select(DB::raw('sum(order_books.quantity * order_books.purchase_price) As purchase_price_sum'),
+                DB::raw('sum(order_books.quantity * order_books.sale_price) As sale_price_sum'),
+                DB::raw('sum(order_books.quantity) As quantity'))
+            ->where("order_books.order_id", "=", $id)
             ->where("books.discount", "=", 0)
-            ->groupBy("order__books.order_id")
+            ->groupBy("order_books.order_id")
             ->first();
 
         if (!empty($discBooks) and !empty($NonDiscBooks)) {
@@ -78,11 +78,37 @@ class OrdersController extends Controller
         );
     }
 
-
     public function updateRequiredAmount($id)
     {
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
         Order::where('id', $id)->update(['required_amount' => $total_discountable_price]);
+    }
+
+    public function updatedBy($id)
+    {
+        Order::where('id', $id)->update(['updated_by' => Auth::user()->id]);
+    }
+
+    public function incrementStock($book_id, $quantity)
+    {
+        Book::where('id', $book_id)->increment('quantity', $quantity);
+    }
+
+    public function decrementStock($book_id, $quantity)
+    {
+        Book::where('id', $book_id)->decrement('quantity', $quantity);
+    }
+
+    public function isSellerAndGift($order_id)
+    {
+        //redirect if the seller try to access to gift orders
+        $role = Auth::user()->role;
+        $order = Order::where('id', $order_id)->first();
+        if ($role == 'seller' and $order->type == 'إهداء') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function showAllData(Request $request)
@@ -92,14 +118,15 @@ class OrdersController extends Controller
         $type = $request->get('type');
         $order_id = $request->get('order_id');
 
-        //if role is [ADMIN] show all orders else show only [USER] orders
+        //if role is [ADMIN] show all orders elseif [USER] hide orders where type= gift
         if (Auth::user()->role == 'admin') {
             $orders = Order::join('clients', 'clients.id', '=', 'orders.client_id')
                 ->where('last_name', 'LIKE', '%' . $lname . '%')
                 ->where('first_name', 'LIKE', '%' . $fname . '%')
                 ->where('type', 'LIKE', '%' . $type . '%')
                 ->where('orders.id', 'LIKE', '%' . $order_id)
-                ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.created_at', 'last_name', 'first_name', 'father_name')
+                ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.required_amount', 'orders.paid_amount', 'orders.created_at', 'last_name', 'first_name', 'father_name')
+                ->orderBy('created_at', 'DESC')
                 ->paginate(15);
 
         } elseif (Auth::user()->role == 'seller') {
@@ -108,8 +135,9 @@ class OrdersController extends Controller
                 ->where('first_name', 'LIKE', '%' . $fname . '%')
                 ->where('type', 'LIKE', '%' . $type . '%')
                 ->where('orders.id', 'LIKE', '%' . $order_id)
-                ->where('user_id', Auth::id())
+                ->where('type', '!=', 'إهداء')
                 ->select('orders.id', 'orders.type', 'orders.discount_percentage', 'orders.created_at', 'last_name', 'first_name', 'father_name')
+                ->orderBy('created_at', 'DESC')
                 ->paginate(15);
         }
 
@@ -125,10 +153,9 @@ class OrdersController extends Controller
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
 
-        //redirect if the seller try to access to other sellers orders
-        $role = Auth::user()->role;
-        if($role == 'seller' and $order->user_id != Auth::id()) {
-            return redirect()->back();
+        //redirect if the seller try to access to gift orders
+        if ($this->isSellerAndGift($id)) {
+            return redirect()->route('ordersList');
         }
 
         return view('orders.preview_order')
@@ -144,10 +171,9 @@ class OrdersController extends Controller
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
 
-        //redirect if the seller try to access to other sellers orders
-        $role = Auth::user()->role;
-        if($role == 'seller' and $order->user_id != Auth::id()) {
-            return redirect()->back();
+        //redirect if the seller try to access to gift orders
+        if ($this->isSellerAndGift($id)) {
+            return redirect()->route('ordersList');
         }
 
         if ($order->type == 'إهداء') {
@@ -164,23 +190,38 @@ class OrdersController extends Controller
             ->with(compact('order', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price'));
     }
 
-    public function add()
+    public function add($client_id = null)
     {
-        $clients = Client::all();
-        return view('orders.add_order')->with('clients', $clients);
+        if (!empty($client_id)) {
+            $client = Client::find($client_id);
+            return view('orders.add_order')->with('client', $client);
+        } else {
+            $clients = Client::all();
+            return view('orders.add_order')->with('clients', $clients);
+        }
+
     }
 
     public function store(Request $request)
     {
         $client = explode(' # ', $request->client_id);
-        $request->request->set('client_id', $client[0]);
-        $request->request->set('user_id', Auth::user()->id);
+        $request->request->add(
+            [
+                'client_id' => $client[0],
+                'created_by' => Auth::user()->id,
+                'updated_by' => Auth::user()->id,
+            ]
+        );
+        //$request->request->set('client_id', $client[0]);
+        //$request->request->set('created_by', Auth::user()->id);
+        //$request->request->set('updated_by', Auth::user()->id);
 
         $validated = $request->validate([
             'type' => 'required|alpha',
             'client_id' => 'required|numeric|exists:clients,id',
-            'user_id' => 'required|numeric|exists:users,id',
-            'discount_percentage' => 'required|numeric',
+            'created_by' => 'required|numeric|exists:users,id',
+            'updated_by' => 'required|numeric|exists:users,id',
+            'discount_percentage' => 'required|numeric|min:0|max:100',
         ]);
         $order = Order::Create($validated);
         return redirect(Route('editOrder', $order->id));
@@ -189,12 +230,22 @@ class OrdersController extends Controller
     public function update($id, Request $request)
     {
         $validated = $request->validate([
-            'discount_percentage' => 'required|numeric',
+            'discount_percentage' => 'required|numeric|min:0|max:100',
             'paid_amount' => 'required|numeric',
         ]);
-        $order = Order::find($id)->update($validated);
-        $this->updateRequiredAmount($id);
-        return redirect(Route('editOrder', $id));
+
+        //test if paid_amount > required_amount
+        if ($request->paid_amount > $this->calculate($id)['total_purchase_price']) {
+            $paidAmountAlert = "خطأ: لا يمكن أن يكون المبلغ المدفوع أكبر من المبلغ المستحق !";
+            return redirect()->back()->with(compact('paidAmountAlert'));
+
+        } else {
+            $order = Order::find($id)->update($validated);
+            $this->updateRequiredAmount($id);
+            $this->updatedBy($id);
+
+            return redirect(Route('editOrder', $id));
+        }
     }
 
 
@@ -207,10 +258,9 @@ class OrdersController extends Controller
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
 
-        //redirect if the seller try to access to other sellers orders
-        $role = Auth::user()->role;
-        if($role == 'seller' and $order->user_id != Auth::id()) {
-            return redirect()->back();
+        //redirect if the seller try to access to gift orders
+        if ($this->isSellerAndGift($id)) {
+            return redirect()->route('ordersList');
         }
 
         return view('orders.edit_order')
@@ -221,54 +271,56 @@ class OrdersController extends Controller
     {
         //get book info
         $book = explode(' # ', $request->book_id);
-        $Current_book = Book::find($book[0]);
+        $current_book = Book::find($book[0]);
         //add fields from DB
         $request->request->add(
             [
                 'book_id' => $book[0],
                 'order_id' => $id,
-                'purchase_price' => $Current_book->purchase_price,
-                'sale_price' => $Current_book->sale_price,
+                'purchase_price' => $current_book->purchase_price,
+                'sale_price' => $current_book->purchase_price + ($current_book->purchase_price * $current_book->sale_percentage / 100),
             ]
         );
 
         $validated = $request->validate([
             'order_id' => 'required|numeric|exists:orders,id',
             'book_id' => 'required|numeric|exists:books,id',
-            'quantity' => 'required|numeric|min:1|max:' . $Current_book->quantity,
+            'quantity' => 'required|numeric|min:1|max:' . $current_book->quantity,
             'purchase_price' => 'required|numeric',
-            'sale_price' => 'required|numeric'
+            'sale_price' => 'required|numeric',
         ]);
 
-        Order_Book::Create($validated);
+        OrderBook::Create($validated);
         $this->updateRequiredAmount($id);
 
+        //updated by user
+        $this->updatedBy($id);
+
         //decrement book stock
-        $currentBook = Book::find($request->book_id);
-        $currentBook->decrement('quantity', $request->quantity);
+        $this->decrementStock($request->book_id, $request->quantity);
 
         return redirect(Route('editOrder', $id));
     }
 
     public function destroyBook($id, $book_id)
     {
-        $order_book = Order_Book::where('order_id', $id)->where('book_id', $book_id)->first();
-
-        //increment book stock
-        $currentBook = Book::find($book_id);
-        $currentBook->increment('quantity', $order_book->quantity);
+        $order_book = OrderBook::where('order_id', $id)->where('book_id', $book_id)->first();
 
         //delete Book from order
-        Order_Book::where('order_id', $id)->where('book_id', $book_id)->delete();
+        OrderBook::where('order_id', $id)->where('book_id', $book_id)->delete();
         $this->updateRequiredAmount($id);
+        //updated by user
+        $this->updatedBy($id);
+        //increment book stock
+        $this->incrementStock($book_id, $order_book->quantity);
 
         return redirect(Route('editOrder', $id));
     }
 
     public function destroy($id)
     {
-        Order_Book::where('order_id', $id)->delete();
-        Order::find($id)->delete();
+        OrderBook::where('order_id', $id)->delete();
+        Order::where('id', $id)->delete();
         return redirect(Route('ordersList'));
     }
 
@@ -286,8 +338,8 @@ class OrdersController extends Controller
             $book_data = array("book_id" => $book[0],
                 "title" => $book[1],
                 "quantity" => $request->quantity,
-                "salePrice" => $current_book->sale_price,
-                "totalSalePrice" => $current_book->sale_price * $request->quantity);
+                "salePrice" => $current_book->purchase_price + ($current_book->purchase_price * $current_book->sale_percentage / 100),
+                "totalSalePrice" => ($current_book->purchase_price + ($current_book->purchase_price * $current_book->sale_percentage / 100)) * $request->quantity);
         }
 
         return view('orders.sales.sale')
@@ -317,14 +369,14 @@ class OrdersController extends Controller
     /******* TRASHED ORDERS *******/
     public function showTrashed()
     {
-        $trashedOrders = Order::onlyTrashed()->get();
+        $trashedOrders = Order::onlyTrashed()->paginate(15);
         return view('trash.orders')
             ->with(compact('trashedOrders'));
     }
 
     public function restoreTrashed($id)
     {
-        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id', $id);
+        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id);
         $trashedOrder = Order::onlyTrashed()->find($id);
 
         $trashedOrderBook->restore();
@@ -334,7 +386,7 @@ class OrdersController extends Controller
 
     public function dropTrashed($id)
     {
-        $trashedOrderBook = Order_Book::onlyTrashed()->where('order_id', $id);
+        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id);
         $trashedOrder = Order::onlyTrashed()->find($id);
 
         $trashedOrderBook->forceDelete();

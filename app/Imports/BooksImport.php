@@ -27,7 +27,7 @@ class BooksImport implements ToModel, WithStartRow
             'edition' => $row[6],
             'quantity' => $row[7],
             'purchase_price' => $row[8],
-            'sale_price' => $row[9],
+            'sale_percentage' => $row[9],
             'discount' => $row[10],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()

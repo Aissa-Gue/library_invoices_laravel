@@ -16,7 +16,7 @@ class ClientSearchBar extends Component
             ->orWhere('first_name', 'LIKE', '%' . $this->client . '%')
             ->orWhere('father_name', 'LIKE', '%' . $this->client . '%')
             ->select('id', 'last_name', 'first_name', 'father_name')
-            ->paginate(10);
+            ->paginate(15);
 
         return view('livewire.client-search-bar')
             ->with('clients', $clients);

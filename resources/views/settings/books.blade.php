@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    @include('settings.navigation')
+    @include('includes.navbars.settings.navigation')
 
 
     <!-------- BOOKS SECTION ---------->

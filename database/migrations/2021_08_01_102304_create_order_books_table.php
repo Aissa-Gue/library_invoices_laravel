@@ -20,7 +20,6 @@ class CreateOrderBooksTable extends Migration
             $table->integer('purchase_price');
             $table->integer('sale_price');
             $table->timestamps();
-            $table->softDeletes();
             $table->primary(array('order_id','book_id'));
         });
     }

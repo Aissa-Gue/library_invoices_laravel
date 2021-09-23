@@ -113,11 +113,19 @@
                             <div class="form-text text-danger">{{$message}}</div>
                             @enderror
                         </div>
+
                         <div class="col-md-6">
-                            <label class="form-label" for="sale_price">سعر البيع</label>
-                            <input type="number" class="form-control" name="sale_price" id="sale_price"
-                                   placeholder="أدخل سعر البيع" value="{{old('sale_price')}}">
-                            @error('sale_price')
+                            <label class="form-label" for="sale_percentage">نسبة البيع</label>
+                            <select class="form-control text-center" id="sale_percentage" name="sale_percentage" value="{{old('sale_percentage')}}" required>
+                                <option>- اختر نسبة مئوية -</option>
+                                <option value="0">0%</option>
+                                <option value="10">10%</option>
+                                <option value="15">15%</option>
+                                <option value="20">20%</option>
+                                <option value="25">25%</option>
+                                <option value="30">30%</option>
+                            </select>
+                            @error('sale_percentage')
                             <div class="form-text text-danger">{{$message}}</div>
                             @enderror
                         </div>

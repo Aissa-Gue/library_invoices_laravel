@@ -33,12 +33,12 @@
                 <th scope="col">عنوان الكتاب</th>
                 <th scope="col">المؤلف</th>
                 <th scope="col" class="text-center">الكمية</th>
-                <th scope="col" class="text-center">سعر الشراء</th>
                 <th scope="col" class="text-center">سعر البيع</th>
-                <th scope="col" class="text-center">التخفيض</th>
                 <th scope="col" class="text-center">تفاصيل</th>
                 <th scope="col" class="text-center">تعديل</th>
-                <th scope="col" class="text-center">حذف</th>
+                @if(Auth::user()->role == 'admin')
+                    <th scope="col" class="text-center">حذف</th>
+                @endif
             </tr>
             </thead>
             <tbody>
@@ -56,12 +56,7 @@
                     <td>{{$book->title}}</td>
                     <td>{{$book->author}}</td>
                     <td class="text-center">{{$book->quantity}}</td>
-                    <td class="text-center">{{$book->purchase_price}}</td>
-                    <td class="text-center">{{$book->sale_price}}</td>
-                    <td class="text-center">
-                        @if($book->discount == 1) {{'نعم'}}
-                        @elseif($book->discount == 0) {{'لا'}}@endif
-                    </td>
+                    <td class="text-center">{{number_format($book->purchase_price + ($book->purchase_price * $book->sale_percentage / 100),2)}}</td>
 
                     <td class="text-center">
                         <a class="btn btn-outline-success"
@@ -85,17 +80,19 @@
                         </a>
                     </td>
 
-                    <td class="text-center">
-                        <a class="btn btn-outline-danger"
-                           href="{{route('deleteBook', $book->id)}}"
-                           onclick="return confirm('هل أنت متأكد؟')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                 fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                            </svg>
-                        </a>
-                    </td>
+                    @if(Auth::user()->role == 'admin')
+                        <td class="text-center">
+                            <a class="btn btn-outline-danger"
+                               href="{{route('deleteBook', $book->id)}}"
+                               onclick="return confirm('هل أنت متأكد؟')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                </svg>
+                            </a>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
             </tbody>

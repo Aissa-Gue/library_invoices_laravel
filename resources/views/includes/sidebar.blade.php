@@ -3,7 +3,7 @@
     <div class="nav flex-column nav-pills" id="myTab" role="tablist" aria-orientation="vertical">
         @if(Auth::user()->role == 'admin')
             <li class="my_navList">عام</li>
-            <a class="nav-link {{Route::is('home') ? 'active' : ''}}" href="{{Route('home')}}">
+            <a class="nav-link {{Request::is('dashboard/*') ? 'active' : ''}}" href="{{Route('home')}}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell"
                      viewBox="0 0 16 16">
                     <path
@@ -37,7 +37,8 @@
             إضافة كتاب
         </a>
 
-        <a class="nav-link {{!Route::is('addBook') && Request::is('books/*') ? 'active' : ''}}" href="{{Route('booksList')}}">
+        <a class="nav-link {{!Route::is('addBook') && Request::is('books/*') ? 'active' : ''}}"
+           href="{{Route('booksList')}}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-list-check" viewBox="0 0 16 16">
                 <path fill-rule="evenodd"
@@ -48,9 +49,16 @@
         <!-- END Books section -->
 
         <!-- START Clients section -->
-        <li class="my_navList">الزبائن</li>
+        <li class="my_navList">
+            @if(Auth::user()->role == 'admin')
+                الزبائن / المزودين
+            @else
+                الزبائن
+            @endif
+        </li>
 
-        <a class="nav-link {{Route::is('addClient') ? 'active' : ''}}" href="{{Route('addClient')}}">
+        <a class="nav-link {{Route::is('addClient') || Route::is('addProvider') ? 'active' : ''}}"
+           href="{{Route('addClient')}}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-person-plus" viewBox="0 0 16 16">
                 <path
@@ -58,16 +66,25 @@
                 <path fill-rule="evenodd"
                       d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
             </svg>
-            إضافة زبون
+            @if(Auth::user()->role == 'admin')
+                إضافة زبون / مزود
+            @else
+                إضافة زبون
+            @endif
         </a>
 
-        <a class="nav-link {{!Route::is('addClient') && Request::is('clients/*') ? 'active' : ''}}" href="{{Route('clientsList')}}">
+        <a class="nav-link {{!Route::is('addClient') && !Route::is('addProvider') && (Request::is('clients/*') || Request::is('providers/*')) ? 'active' : ''}}"
+           href="{{Route('clientsList')}}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people"
                  viewBox="0 0 16 16">
                 <path
                     d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
             </svg>
-            قائمة الزبائن
+            @if(Auth::user()->role == 'admin')
+                قائمة الزبائن / المزودين
+            @else
+                قائمة الزبائن
+            @endif
         </a>
         <!-- END Clients section -->
 
@@ -85,7 +102,8 @@
             بيع بالتجزئة
         </a>
 
-        <a class="nav-link {{Route::is('addOrder') ? 'active' : ''}}" href="{{Route('addOrder')}}">
+        <a class="nav-link {{Route::is('addOrder') || Route::is('addPurchase') ? 'active' : ''}}"
+           href="{{Route('addOrder')}}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4"
                  viewBox="0 0 16 16">
                 <path
@@ -94,7 +112,8 @@
             إضافة فاتورة
         </a>
 
-        <a class="nav-link {{!Route::is('addSale') && !Route::is('addOrder') && Request::is('orders/*') ? 'active' : ''}}" href="{{Route('ordersList')}}">
+        <a class="nav-link {{!Route::is('addSale') && !Route::is('addOrder') && !Route::is('addPurchase') && (Request::is('orders/*') || Request::is('purchases/*')) ? 'active' : ''}}"
+           href="{{Route('ordersList')}}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-list-check" viewBox="0 0 16 16">
                 <path fill-rule="evenodd"

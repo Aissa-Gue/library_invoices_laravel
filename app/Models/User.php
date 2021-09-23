@@ -24,9 +24,14 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function orders()
+    public function createdBy()
     {
-        return $this->hasMany(Order::class)->withTrashed();
+        return $this->hasMany(Order::class, 'created_by','id')->withTrashed();
+    }
+
+    public function updatedBy()
+    {
+        return $this->hasMany(Order::class, 'updated_by','id')->withTrashed();
     }
     /**
      * The attributes that should be hidden for arrays.

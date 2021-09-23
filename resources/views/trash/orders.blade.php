@@ -1,13 +1,13 @@
 @extends('layouts.master')
 
 @section('content')
-    @include('trash.navigation')
+    @include('includes.navbars.trash.navigation')
 
     <!-------- ORDERS SECTION ---------->
     <div class="row mt-3">
         <div class="col-md-12">
             <div class="alert alert-danger text-center" role="alert">
-                <h5><i class="fas fa-file-invoice-dollar"></i> الفواتير المحذوفة</h5>
+                <h5><i class="fas fa-file-invoice-dollar"></i> فواتير الزبائن المحذوفة</h5>
             </div>
         </div>
 
@@ -72,8 +72,12 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="row justify-content-center fixed-bottom">
+                <div class="offset-2 col-md-auto">
+                    {{$trashedOrders->links()}}
+                </div>
+            </div>
         </div>
-
     </div>
     <!-------- END ORDERS SECTION ---------->
 

@@ -15,7 +15,7 @@
                     <label for="quantity" class="form-label mt-2"> عنوان الكتاب</label>
                     <div class="input-group">
                         <div class="col-md-5">
-                            @livewire('book-search-bar',['order_id' => 0])
+                            @livewire('book-search-bar',['isSaleByPieces' => true])
                         </div>
                         <div class="col-md-2">
                             <input type="text" pattern="[0-9]*" maxlength="2" class="form-control" name="quantity"

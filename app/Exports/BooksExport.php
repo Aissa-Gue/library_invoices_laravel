@@ -21,7 +21,7 @@ class BooksExport implements FromCollection, WithHeadings, WithStrictNullCompari
     public function headings(): array
     {
         return ["رقم الكتاب", "العنوان", "المؤلف","المحقق", "المترجم", "الناشر","سنة النشر",
-            "الطبعة", "الكمية","سعر الشراء", "سعر البيع","إمكانية التخفيض",
+            "الطبعة", "الكمية","سعر الشراء", "نسبة البيع","إمكانية التخفيض",
             "تاريخ الإضافة", "تاريخ التعديل"];
     }
 }

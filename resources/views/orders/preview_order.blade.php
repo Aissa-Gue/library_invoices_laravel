@@ -10,7 +10,7 @@
         <legend class="scheduler-border">معلومات الفاتورة</legend>
         <div class="row mt-3">
             <div class="col-md-4">
-                <p><strong>رقم الفاتورة: </strong>{{$order->id}}</p>
+                <p><strong>رقم الفاتورة: </strong>{{$order->id}} ~ {{$order->type}}</p>
             </div>
             <div class="col-md-4">
                 <p><strong>تاريخ الفاتورة: </strong>{{$order->created_at}}</p>
@@ -35,7 +35,14 @@
         <div class="row mt-3">
             <div class="col-md-4">
                 <p class="text-success fw-bold">
-                    <strong class="text-dark me-2">البائع: </strong> <i class="fas fa-user-shield"></i> {{$order->user->username}}
+                    <strong class="text-dark me-2">البائع: </strong> <i
+                        class="fas fa-user-shield"></i> {{$order->createdBy->username}}
+                </p>
+            </div>
+            <div class="col-md-4">
+                <p class="text-success fw-bold">
+                    <strong class="text-dark me-2">المعدل: </strong> <i
+                        class="fas fa-user-shield"></i> {{$order->updatedBy->username}}
                 </p>
             </div>
         </div>
@@ -102,6 +109,15 @@
                         <th scope="row" class="text-danger">المبلغ الإجمالي (بالتخفيض):</th>
                         <th class="text-center">{{number_format($total_discountable_price,2)}}</th>
                     </tr>
+                    <tr class="">
+                        <th scope="row" class="text-danger">الدين (المبلغ المتبقي):</th>
+                        @php
+                            /** @var $total_discountable_price */
+                            /** @var $order */
+                            $debt = $total_discountable_price - $order->paid_amount;
+                        @endphp
+                        <th class="text-center text-danger @if($debt != 0) hvr-pop @endif">{{number_format($debt,2)}}</th>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -112,24 +128,32 @@
                 @csrf
                 @method('DELETE')
                 @if($order->type == 'إهداء')
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#giftModal" class="btn btn-success w-25">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#giftModal"
+                            class="btn btn-success w-25">
                         <i class="fas fa-print"></i>
                         طباعة
                     </button>
                 @else
-                    <a href="{{Route('printOrder',$order->id)}}" class="btn btn-success w-25">
+                    <a href="{{Route('printOrder',$order->id)}}"
+                       class="btn btn-success w-25">
                         <i class="fas fa-print"></i>
                         طباعة
                     </a>
                 @endif
-                <a href="{{Route('editOrder',$order->id)}}" class="btn btn-primary w-25">
+                <a href="{{Route('editOrder',$order->id)}}"
+                   class="btn btn-primary w-25">
                     <i class="fas fa-edit"></i>
                     تعديل
                 </a>
-                <button type="submit" class="btn btn-danger btn-r"
-                        onclick="return confirm('هل أنت متأكد؟')"><i class="fas fa-trash-alt w-25"></i>
-                    حــذف
-                </button>
+                @if(Auth::user()->role != 'admin')
+                    <button class="btn w-25">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                @endif
+                @if(Auth::user()->role == 'admin')
+                    <button type="submit" class="btn btn-danger btn-r w-25"
+                            onclick="return confirm('هل أنت متأكد؟')"><i class="fas fa-trash-alt"></i>
+                        حــذف
+                    </button>
+                @endif
             </form>
         </div>
 
@@ -146,8 +170,10 @@
                         حدد الفاتورة التي تريد طباعتها؟
                     </div>
                     <div class="modal-footer justify-content-center">
-                        <a href="{{Route('printOrder',$order->id)}}?invoice=buyer" class="btn btn-success">فاتورة الزبون</a>
-                        <a href="{{Route('printOrder',$order->id)}}?invoice=seller" class="btn btn-primary">فاتورة البائع</a>
+                        <a href="{{Route('printOrder',$order->id)}}?invoice=buyer" class="btn btn-success">فاتورة
+                            الزبون</a>
+                        <a href="{{Route('printOrder',$order->id)}}?invoice=seller" class="btn btn-primary">فاتورة
+                            البائع</a>
                     </div>
                 </div>
             </div>
