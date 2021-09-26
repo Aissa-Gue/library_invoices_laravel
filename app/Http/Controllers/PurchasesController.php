@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Provider;
+use App\Models\Person;
 use App\Models\Purchase;
 use App\Models\PurchaseBook;
 use Illuminate\Http\Request;
@@ -81,9 +82,21 @@ class PurchasesController extends Controller
             'sale_percentage' => 'required|numeric|min:0|max:30'
         ]);
 
-        Book::where('id', $id)->update($validated);
-        $percentageAlert = "تم تعديل نسبة بيع الكتاب إلى " . $request->sale_percentage . "% بنجاح";
+        $book = Book::where('id', $id)->first();
+        $book->update($validated);
+        $percentageAlert = "تم تعديل نسبة بيع الكتاب إلى: " . $request->sale_percentage . "% ، وسعر الشراء إلى: " . number_format($book->purchase_price, 2) . " بنجاح";
         return redirect()->back()->with(compact('percentageAlert'));
+    }
+
+    public function purchasePriceAlert($id)
+    {
+        $book = Book::join('purchase_books', 'purchase_books.book_id', 'books.id')
+            ->where('purchase_id', $id)
+            ->select('books.purchase_price')
+            ->first();
+
+        $purchasePriceAlert = "تم تعديل سعر شراء الكتاب إلى: " . number_format($book->purchase_price, 2) . " بنجاح";
+        return redirect()->back()->with(compact('purchasePriceAlert'));
     }
 
 
@@ -94,13 +107,14 @@ class PurchasesController extends Controller
         $establishment = $request->get('establishment');
         $purchase_id = $request->get('purchase_id');
 
-        $purchases = Purchase::join('providers', 'providers.id', '=', 'purchases.provider_id')
+        $purchases = Purchase::join('providers', 'providers.person_id', 'purchases.provider_id')
+            ->join('people', 'people.id', 'providers.person_id')
             ->where('last_name', 'LIKE', '%' . $lname . '%')
             ->where('first_name', 'LIKE', '%' . $fname . '%')
             ->where('establishment', 'LIKE', '%' . $establishment . '%')
             ->where('purchases.id', 'LIKE', '%' . $purchase_id)
             ->select('purchases.id', 'purchases.required_amount', 'purchases.paid_amount', 'purchases.created_at', 'last_name', 'first_name', 'father_name', 'establishment')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('purchases.created_at', 'DESC')
             ->paginate(15);
 
         return view('purchases.purchases_list')->with('purchases', $purchases);
@@ -121,11 +135,10 @@ class PurchasesController extends Controller
     public function add($provider_id = null)
     {
         if (!empty($provider_id)) {
-            $provider = Provider::find($provider_id);
+            $provider = Person::join('providers', 'providers.person_id', 'people.id')->where('person_id', $provider_id)->first();
             return view('purchases.add_purchase')->with('provider', $provider);
         } else {
-            $providers = Provider::all();
-            return view('purchases.add_purchase')->with('providers', $providers);
+            return view('purchases.add_purchase');
         }
     }
 
@@ -139,15 +152,13 @@ class PurchasesController extends Controller
                 'updated_by' => Auth::user()->id,
             ]
         );
-        //$request->request->set('provider_id', $provider[0]);
-        //$request->request->set('created_by', Auth::user()->id);
-        //$request->request->set('updated_by', Auth::user()->id);
 
         $validated = $request->validate([
-            'provider_id' => 'required|numeric|exists:providers,id',
+            'provider_id' => 'required|numeric|exists:providers,person_id',
             'created_by' => 'required|numeric|exists:users,id',
             'updated_by' => 'required|numeric|exists:users,id',
         ]);
+
         $purchase = Purchase::Create($validated);
         return redirect(Route('editPurchase', $purchase->id));
     }
@@ -176,9 +187,11 @@ class PurchasesController extends Controller
             return redirect()->back()->with(compact('paidAmountAlert'));
 
         } else {
-            Purchase::find($id)->update($validated);
-            $this->updateRequiredAmount($id);
-            $this->updatedBy($id);
+            DB::transaction(function () use ($validated, $id) {
+                Purchase::find($id)->update($validated);
+                $this->updateRequiredAmount($id);
+                $this->updatedBy($id);
+            });
             return redirect(Route('editPurchase', $id));
         }
     }
@@ -204,16 +217,19 @@ class PurchasesController extends Controller
         ]);
         //old book info [before update]
         $oldBookInfo = Book::find($request->book_id);
-        //add Book to purchases [purchase_books]
-        PurchaseBook::Create($validated);
-        //update required amount [purchases]
-        $this->updateRequiredAmount($id);
-        //updated by user [purchases]
-        $this->updatedBy($id);
-        //increment book stock [books]
-        $this->incrementStock($request->book_id, $request->quantity);
-        //update book price [books]
-        $this->updateBookPrice($request->book_id, $request->purchase_price);
+
+        DB::transaction(function () use ($id, $validated, $request) {
+            //add Book to purchases [purchase_books]
+            PurchaseBook::Create($validated);
+            //update required amount [purchases]
+            $this->updateRequiredAmount($id);
+            //updated by user [purchases]
+            $this->updatedBy($id);
+            //increment book stock [books]
+            $this->incrementStock($request->book_id, $request->quantity);
+            //update book price [books]
+            $this->updateBookPrice($request->book_id, $request->purchase_price);
+        });
 
         //check price
         if ($oldBookInfo->purchase_price == $request->purchase_price) {
@@ -237,30 +253,34 @@ class PurchasesController extends Controller
                     )
                 );
         }
-
     }
 
     public function destroyBook($id, $book_id)
     {
         $purchase_book = PurchaseBook::where('purchase_id', $id)->where('book_id', $book_id)->first();
-        //decrement book stock [books]
-        $this->decrementStock($book_id, $purchase_book->quantity);
-        //delete Book from purchase [purchase_books]
-        PurchaseBook::where('purchase_id', $id)->where('book_id', $book_id)->delete();
-        //update required amount [purchases]
-        $this->updateRequiredAmount($id);
-        //updated by user [purchases]
-        $this->updatedBy($id);
+
+        DB::transaction(function () use ($id, $purchase_book, $book_id) {
+            //decrement book stock [books]
+            $this->decrementStock($book_id, $purchase_book->quantity);
+            //delete Book from purchase [purchase_books]
+            PurchaseBook::where('purchase_id', $id)->where('book_id', $book_id)->forceDelete();
+            //update required amount [purchases]
+            $this->updateRequiredAmount($id);
+            //updated by user [purchases]
+            $this->updatedBy($id);
+        });
 
         return redirect(Route('editPurchase', $id));
     }
 
     public function destroy($id)
     {
-        //delete all books from purchase [purchase_books]
-        PurchaseBook::where('purchase_id', $id)->delete();
-        //delete purchase [purchases]
-        Purchase::where('id', $id)->delete();
+        DB::transaction(function () use ($id) {
+            //delete all books from purchase [purchase_books]
+            PurchaseBook::where('purchase_id', $id)->delete();
+            //delete purchase [purchases]
+            Purchase::where('id', $id)->delete();
+        });
         return redirect(Route('purchasesList'));
     }
 
@@ -275,21 +295,25 @@ class PurchasesController extends Controller
 
     public function restoreTrashed($id)
     {
-        $trashedPurchaseBook = PurchaseBook::onlyTrashed()->where('purchase_id', $id);
+        $trashedPurchaseBook = PurchaseBook::onlyTrashed()->where('purchase_id', $id)->get();
         $trashedPurchase = Purchase::onlyTrashed()->find($id);
 
-        $trashedPurchaseBook->restore();
-        $trashedPurchase->restore();
+        DB::transaction(function () use ($trashedPurchase, $trashedPurchaseBook) {
+            $trashedPurchaseBook->restore();
+            $trashedPurchase->restore();
+        });
         return redirect()->back();
     }
 
     public function dropTrashed($id)
     {
-        $trashedPurchaseBook = PurchaseBook::onlyTrashed()->where('purchase_id', $id);
+        $trashedPurchaseBook = PurchaseBook::onlyTrashed()->where('purchase_id', $id)->get();
         $trashedPurchase = Purchase::onlyTrashed()->find($id);
 
-        $trashedPurchaseBook->forceDelete();
-        $trashedPurchase->forceDelete();
+        DB::transaction(function () use ($trashedPurchase, $trashedPurchaseBook) {
+            $trashedPurchaseBook->forceDelete();
+            $trashedPurchase->forceDelete();
+        });
         return redirect()->back();
     }
 }

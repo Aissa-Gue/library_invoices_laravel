@@ -41,6 +41,13 @@
                     </tr>
                     </thead>
                     <tbody>
+                    @if($debts->isEmpty())
+                        <tr class="fw-bold text-center text-danger">
+                            <td colspan="7" class="py-4"><i class="fas fa-exclamation-triangle fs-4 mb-3"></i><br> لا وجود
+                                لزبائن لديهم ديون !
+                            </td>
+                        </tr>
+                    @endif
                     @foreach($debts as $debt)
                         <tr>
                             <th scope="row" class="text-center fs-5">

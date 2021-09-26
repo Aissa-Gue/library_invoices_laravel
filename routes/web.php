@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('purchases/add/{provider_id?}', '\App\Http\Controllers\PurchasesController@add')->name('addPurchase');
     Route::post('purchases/add', '\App\Http\Controllers\PurchasesController@store')->name('addPurchase');
     Route::post('purchases/addBook/{id}', '\App\Http\Controllers\PurchasesController@storeBook')->name('addPurchaseBook');
+    Route::get('purchases/addBook/alert/{id}', '\App\Http\Controllers\PurchasesController@purchasePriceAlert')->name('purchasePriceAlert');
 
     Route::get('purchases/list', '\App\Http\Controllers\PurchasesController@showAllData')->name('purchasesList');
     Route::get('purchases/preview/{id}', '\App\Http\Controllers\PurchasesController@show')->name('previewPurchase');

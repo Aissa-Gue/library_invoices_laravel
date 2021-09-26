@@ -19,8 +19,9 @@
                     <th scope="row" class="text-center">{{++$i}}</th>
                     <td class="">{{$orderBook->book->title}}</td>
                     <td class="text-center" width="60px">{{$orderBook->quantity}}</td>
-                    <td class="text-center" width="100px">{{$orderBook->purchase_price}}.00</td>
-                    <td class="text-center" width="120px">{{$orderBook->purchase_price * $orderBook->quantity}}.00</td>
+                    <td class="text-center" width="100px">{{number_format($orderBook->purchase_price,2)}}</td>
+                    <td class="text-center"
+                        width="120px">{{number_format($orderBook->purchase_price * $orderBook->quantity,2)}}</td>
                 </tr>
 
                 @php
@@ -62,7 +63,7 @@
                 <tr>
                     <th colspan="3"></th>
                     <th scope="row" class="text-center">المبلغ الإجمالي:</th>
-                    <td class="text-center fs-5">{{$total_purchase_price}}.00 دج</td>
+                    <td class="text-center fs-5">{{number_format($total_purchase_price,2)}} دج</td>
                 </tr>
                 </tbody>
             </table>

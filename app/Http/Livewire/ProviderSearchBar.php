@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Provider;
+use App\Models\Person;
 use Livewire\Component;
 
 class ProviderSearchBar extends Component
@@ -11,7 +11,8 @@ class ProviderSearchBar extends Component
 
     public function render()
     {
-        $providers = Provider::where('id', 'LIKE', '%' . $this->provider)
+        $providers = Person::join('providers','providers.person_id','people.id')
+            ->where('id', 'LIKE', '%' . $this->provider)
             ->orWhere('last_name', 'LIKE', '%' . $this->provider . '%')
             ->orWhere('first_name', 'LIKE', '%' . $this->provider . '%')
             ->orWhere('father_name', 'LIKE', '%' . $this->provider . '%')

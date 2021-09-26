@@ -34,7 +34,7 @@
                 @foreach($trashedOrders as $trashedOrder)
                     <tr class="fw-bold">
                         <th class="text-danger"><i class="fas fa-arrow-alt-circle-left fs-5"></i></th>
-                        <td>{{$trashedOrder->client->last_name.' '.$trashedOrder->client->first_name.' بن '.$trashedOrder->client->father_name}}</td>
+                        <td>{{$trashedOrder->client->person->last_name.' '.$trashedOrder->client->person->first_name.' بن '.$trashedOrder->client->person->father_name}}</td>
                         <td>{{$trashedOrder->type}}</td>
                         <td class="text-center">{{number_format($trashedOrder->required_amount,2)}} دج</td>
                         <td class="text-center text-danger">{{number_format($trashedOrder->required_amount - $trashedOrder->paid_amount,2)}} دج</td>

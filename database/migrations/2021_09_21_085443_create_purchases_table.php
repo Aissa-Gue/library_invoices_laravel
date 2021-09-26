@@ -15,7 +15,7 @@ class CreatePurchasesTable extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('provider_id')->references('id')->on('providers');
+            $table->foreignId('provider_id')->references('person_id')->on('providers');
             $table->foreignId('created_by')->references('id')->on('users');
             $table->foreignId('updated_by')->references('id')->on('users');
             $table->float('paid_amount')->default(0);

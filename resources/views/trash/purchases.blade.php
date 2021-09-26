@@ -33,7 +33,7 @@
                 @foreach($trashedPurchases as $trashedPurchase)
                     <tr class="fw-bold">
                         <th class="text-danger"><i class="fas fa-arrow-alt-circle-left fs-5"></i></th>
-                        <td>{{$trashedPurchase->provider->last_name.' '.$trashedPurchase->provider->first_name.' بن '.$trashedPurchase->provider->father_name}}</td>
+                        <td>{{$trashedPurchase->provider->person->last_name.' '.$trashedPurchase->provider->person->first_name.' بن '.$trashedPurchase->provider->person->father_name}}</td>
                         <td class="text-center">{{number_format($trashedPurchase->required_amount,2)}} دج</td>
                         <td class="text-center text-danger">{{number_format($trashedPurchase->required_amount - $trashedPurchase->paid_amount,2)}} دج</td>
                         <td class="text-center">{{$trashedPurchase->deleted_at}}</td>

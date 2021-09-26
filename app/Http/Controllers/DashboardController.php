@@ -49,14 +49,15 @@ class DashboardController extends Controller
         $last_name = $request->get('last_name');
         $first_name = $request->get('first_name');
 
-        $debts = Order::join('clients', 'orders.client_id', 'clients.id')
+        $debts = Order::join('clients', 'orders.client_id', 'clients.person_id')
+            ->join('people', 'orders.client_id', 'people.id')
             ->where('last_name', 'LIKE', '%' . $last_name . '%')
             ->where('first_name', 'LIKE', '%' . $first_name . '%')
-            ->select('orders.id', 'client_id', 'orders.required_amount','orders.paid_amount', 'orders.created_at', 'last_name', 'first_name', 'father_name', DB::raw('SUM(required_amount - paid_amount) as debt_amount'))
+            ->select('orders.id', 'client_id', 'orders.required_amount', 'orders.paid_amount', 'orders.created_at', 'last_name', 'first_name', 'father_name', DB::raw('SUM(required_amount - paid_amount) as debt_amount'))
             ->havingRaw('debt_amount > ?', [0])
             ->groupBy('orders.id')
             ->orderBy('client_id')
-            ->orderBy('created_at','DESC')
+            ->orderBy('created_at', 'DESC')
             ->paginate(15);
 
         return view('dashboard.clients_debts')
@@ -69,14 +70,15 @@ class DashboardController extends Controller
         $last_name = $request->get('last_name');
         $first_name = $request->get('first_name');
 
-        $debts = Purchase::join('providers', 'purchases.provider_id', 'providers.id')
+        $debts = Purchase::join('providers', 'purchases.provider_id', 'providers.person_id')
+            ->join('people', 'people.id', 'providers.person_id')
             ->where('last_name', 'LIKE', '%' . $last_name . '%')
             ->where('first_name', 'LIKE', '%' . $first_name . '%')
             ->select('purchases.id', 'provider_id', 'purchases.required_amount', 'purchases.paid_amount', 'purchases.created_at', 'last_name', 'first_name', 'father_name', DB::raw('SUM(required_amount - paid_amount) as debt_amount'))
             ->havingRaw('debt_amount > ?', [0])
             ->groupBy('purchases.id')
-            ->orderBy('provider_id')
-            ->orderBy('created_at','DESC')
+            ->orderBy('person_id')
+            ->orderBy('created_at', 'DESC')
             ->paginate(15);
 
         return view('dashboard.providers_debts')

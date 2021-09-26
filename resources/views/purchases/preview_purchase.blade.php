@@ -22,7 +22,7 @@
         <div class="row mt-3">
             <div class="col-md-4">
                 <p>
-                    <strong>الزبون: </strong>{{$purchase->provider->last_name . ' ' . $purchase->provider->first_name . ' بن ' . $purchase->provider->father_name}}
+                    <strong>الزبون: </strong>{{$purchase->provider->person->last_name . ' ' . $purchase->provider->person->first_name . ' بن ' . $purchase->provider->person->father_name}}
                 </p>
             </div>
             <div class="col-md-3">

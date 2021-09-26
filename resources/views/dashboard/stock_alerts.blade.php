@@ -21,7 +21,11 @@
                     </thead>
                     <tbody>
                     @if($alert_books->isEmpty())
-                        <th scope="row" colspan="4" class="text-center text-success">لا توجد كتب قريبة النفاذ !</th>
+                        <tr class="fw-bold text-center text-danger">
+                            <td colspan="4" class="py-4"><i class="fas fa-exclamation-triangle fs-4 mb-3"></i><br> لا
+                                توجد كتب قريبة النفاذ !
+                            </td>
+                        </tr>
                     @endif
                     @foreach($alert_books as $alert_book)
                         <tr>

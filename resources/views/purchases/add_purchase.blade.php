@@ -17,7 +17,7 @@
                 <div class="col-md-6">
                     @if(!empty($provider))
                         <label for="client_id" class="form-label">المزود</label>
-                        <input type="text" name="client_id" class="form-control"
+                        <input type="text" name="provider_id" class="form-control"
                                value="{{$provider->id.' # '.$provider->last_name.' '.$provider->first_name.' بن '.$provider->father_name}}">
                     @else
                         @livewire('provider-search-bar')

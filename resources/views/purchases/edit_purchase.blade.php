@@ -24,7 +24,7 @@
                 <div class="input-group">
                     <span class="input-group-text w-25">المزود</span>
                     <input
-                        value="{{$purchase->provider->last_name.' '.$purchase->provider->first_name.' بن '.$purchase->provider->father_name}}"
+                        value="{{$purchase->provider->person->last_name.' '.$purchase->provider->person->first_name.' بن '.$purchase->provider->person->father_name}}"
                         class="form-control" name="provider_id" id="provider_id"
                         placeholder="أدخل اسم المزود" disabled>
                 </div>
@@ -69,6 +69,15 @@
                 <i class="fas fa-check-circle me-2 fs-5"></i>
                 <div>
                     {{session()->get('percentageAlert')}}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        @if(session()->has('purchasePriceAlert'))
+            <div class="alert alert-success alert-dismissible d-flex align-items-center fw-bold mt-3" role="alert">
+                <i class="fas fa-check-circle me-2 fs-5"></i>
+                <div>
+                    {{session()->get('purchasePriceAlert')}}
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -135,8 +144,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">لا، شكرا
-                            </button>
+                            <a href="{{Route('purchasePriceAlert',$purchase->id)}}" class="btn btn-outline-danger">لا، شكرا
+                            </a>
                         </div>
                     </div>
                 </div>

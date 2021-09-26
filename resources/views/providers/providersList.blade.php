@@ -18,7 +18,6 @@
                            placeholder="أدخل الإسم" value="{{request('first_name')}}">
                     <button class="btn btn-primary" type="submit">بحث</button>
                 </div>
-
             </form>
         </div>
     </div>

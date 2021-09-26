@@ -18,8 +18,9 @@
                     <th scope="row" class="text-center">{{++$i}}</th>
                     <td class="">{{$orderBook->book->title}}</td>
                     <td class="text-center" width="60px">{{$orderBook->quantity}}</td>
-                    <td class="text-center" width="100px">{{$orderBook->sale_price}}.00</td>
-                    <td class="text-center" width="120px">{{$orderBook->sale_price * $orderBook->quantity}}.00</td>
+                    <td class="text-center" width="100px">{{number_format($orderBook->sale_price,2)}}</td>
+                    <td class="text-center"
+                        width="120px">{{number_format($orderBook->sale_price * $orderBook->quantity,2)}}</td>
                 </tr>
 
                 @php
@@ -61,7 +62,7 @@
                 <tr>
                     <th colspan="3"></th>
                     <th scope="row" class="text-center">المبلغ الإجمالي:</th>
-                    <td class="text-center fs-5">{{$total_sale_price}}.00 دج</td>
+                    <td class="text-center fs-5">{{number_format($total_sale_price,2)}} دج</td>
                 </tr>
                 @if($order->discount_percentage > 0)
                     @if($order->type == 'معرض')
@@ -74,9 +75,14 @@
                     <tr>
                         <th colspan="3"></th>
                         <th scope="row" class="text-center">المبلغ الإجمالي (بالتخفيض):</th>
-                        <td class="text-center fs-5">{{$total_discountable_price}}.00 دج</td>
+                        <td class="text-center fs-5">{{number_format($total_discountable_price,2)}} دج</td>
                     </tr>
                 @endif
+                <tr>
+                    <th colspan="3"></th>
+                    <th scope="row" class="text-center">إجمالي الديون:</th>
+                    <td class="text-center fs-5">{{number_format($total_debts->total_debts,2)}} دج</td>
+                </tr>
                 </tbody>
             </table>
         </div>

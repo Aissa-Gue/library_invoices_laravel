@@ -30,7 +30,7 @@
             <h6 class="mb-3"><strong>رقم الفاتورة: </strong>{{$order->id}}</h6>
         @endif
         <h6>
-            <strong>الزبون: </strong>{{$order->client->last_name . ' ' . $order->client->first_name . ' بن ' . $order->client->father_name}}
+            <strong>الزبون: </strong>{{$order->client->person->last_name . ' ' . $order->client->person->first_name . ' بن ' . $order->client->person->father_name}}
         </h6>
     </div>
     <div class="col-sm-5">
@@ -39,7 +39,7 @@
         @else
             <h6 class="mb-3"><strong>تاريخ الفاتورة: </strong> {{$order->created_at}}</h6>
         @endif
-        <h6><strong>الهاتف: </strong>0{{$order->client->phone1}} / 0{{$order->client->phone2}}</h6>
+        <h6><strong>الهاتف: </strong>0{{$order->client->person->phone1}} / 0{{$order->client->person->phone2}}</h6>
     </div>
 </div>
 

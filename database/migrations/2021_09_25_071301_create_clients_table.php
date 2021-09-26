@@ -14,17 +14,9 @@ class CreateClientsTable extends Migration
     public function up()
     {
         Schema::create('clients', function (Blueprint $table) {
-            $table->id();
-            $table->string('last_name');
-            $table->string('first_name');
-            $table->string('father_name');
-            $table->string('address')->nullable();
-            $table->integer('phone1')->unique();
-            $table->integer('phone2')->unique()->nullable();
+            $table->foreignId('person_id')->references('id')->on('people');
             $table->timestamps();
             $table->softDeletes();
-            $table->charset = 'utf8';
-            $table->collation = 'utf8_general_ci';
         });
     }
 

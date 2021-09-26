@@ -19,6 +19,7 @@ class CreatePurchaseBooksTable extends Migration
             $table->integer('quantity');
             $table->integer('purchase_price');
             $table->timestamps();
+            $table->softDeletes();
             $table->primary(array('purchase_id','book_id'));
         });
     }

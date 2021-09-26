@@ -23,7 +23,7 @@ class Order extends Model
     // belongsTo => foreign key here
     public function client()
     {
-        return $this->belongsTo(Client::class)->withTrashed();
+        return $this->belongsTo(Client::class,'client_id','person_id')->withTrashed();
     }
 
     public function createdBy()

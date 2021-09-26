@@ -12,14 +12,14 @@ class Provider extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'last_name',
-        'first_name',
-        'father_name',
-        'establishment',
-        'address',
-        'phone1',
-        'phone2'
+        'person_id',
+        'establishment'
     ];
+
+    public function person()
+    {
+        return $this->belongsTo(Person::class,'person_id','id');
+    }
 
     public function purchases()
     {

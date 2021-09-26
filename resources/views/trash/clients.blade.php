@@ -59,11 +59,11 @@
                 @foreach($trashedClients as $trashedClient)
                     <tr class="fw-bold">
                         <th class="text-danger"><i class="fas fa-arrow-alt-circle-left fs-5"></i></th>
-                        <td>{{$trashedClient->last_name.' '.$trashedClient->first_name.' بن '.$trashedClient->father_name}}</td>
-                        <td>{{$trashedClient->phone1.' / '.$trashedClient->phone2}}</td>
+                        <td>{{$trashedClient->person->last_name.' '.$trashedClient->person->first_name.' بن '.$trashedClient->person->father_name}}</td>
+                        <td>{{$trashedClient->person->phone1.' / '.$trashedClient->person->phone2}}</td>
                         <td>{{$trashedClient->deleted_at}}</td>
                         <td class="text-center">
-                            <form action="{{route('restoreTrashedClient', $trashedClient->id)}}" method="POST">
+                            <form action="{{route('restoreTrashedClient', $trashedClient->person_id)}}" method="POST">
                                 @csrf
                                 <button class="btn btn-outline-success"
                                         type="submit"
@@ -77,7 +77,7 @@
                             </form>
                         </td>
                         <td class="text-center">
-                            <form action="{{route('deleteTrashedClient', $trashedClient->id)}}" method="POST">
+                            <form action="{{route('deleteTrashedClient', $trashedClient->person_id)}}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-outline-danger"

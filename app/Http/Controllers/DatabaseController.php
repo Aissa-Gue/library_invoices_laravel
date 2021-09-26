@@ -16,6 +16,9 @@ class DatabaseController extends Controller
     {
         $username = env('DB_USERNAME');
         $dbname = env('DB_DATABASE');
+        $ignoreUsers = '--ignore-table=' . $dbname . '.users';
+        $ignoreMigrations = '--ignore-table=' . $dbname . '.migrations';
+
         $d = date('Y-m-d');
         $t = time();
         $dir = 'D:/library_invoices_backups/' . $d . '/';
@@ -24,7 +27,7 @@ class DatabaseController extends Controller
             mkdir($dir, 0777, true);
         }
 
-        $command = "C:/xampp/mysql/bin/mysqldump.exe -u $username $dbname >" . $path;
+        $command = "C:/xampp/mysql/bin/mysqldump.exe -u $username $dbname $ignoreUsers $ignoreMigrations >" . $path;
 
         exec($command . ' 2>&1', $output);
 
@@ -105,7 +108,7 @@ class DatabaseController extends Controller
         $tables = DB::select("SELECT *  FROM information_schema.tables WHERE table_schema = '$databaseName'");
         foreach ($tables as $table) {
             $name = $table->TABLE_NAME;
-            //if you don't want to truncate migrations, cities
+            //if you don't want to truncate migrations, users
             if ($name == 'migrations' or $name == 'users') {
                 continue;
             }

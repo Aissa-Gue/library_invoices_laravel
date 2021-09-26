@@ -21,7 +21,7 @@ class Purchase extends Model
     // belongsTo => foreign key here
     public function provider()
     {
-        return $this->belongsTo(Provider::class)->withTrashed();
+        return $this->belongsTo(Provider::class,'provider_id','person_id')->withTrashed();
     }
 
     public function createdBy()

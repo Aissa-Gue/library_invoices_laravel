@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\BooksExport;
 use App\Imports\BooksImport;
-use App\Models\Order_Book;
+use App\Models\OrderBook;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Validator;
@@ -123,7 +123,7 @@ class BooksController extends Controller
 
     public function dropTrashed($id){
         //test if book exist in order
-        $bookOrders = Order_Book::where('book_id',$id)->get();
+        $bookOrders = OrderBook::where('book_id',$id)->get();
 
         if($bookOrders->isEmpty()){
             $trashedBook = Book::onlyTrashed()->find($id);

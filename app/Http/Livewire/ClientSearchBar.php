@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Client;
+use App\Models\Person;
 use Livewire\Component;
 
 class ClientSearchBar extends Component
@@ -11,7 +11,8 @@ class ClientSearchBar extends Component
 
     public function render()
     {
-        $clients = Client::where('id', 'LIKE', '%' . $this->client)
+        $clients = Person::join('clients', 'clients.person_id', 'people.id')
+            ->where('id', 'LIKE', '%' . $this->client)
             ->orWhere('last_name', 'LIKE', '%' . $this->client . '%')
             ->orWhere('first_name', 'LIKE', '%' . $this->client . '%')
             ->orWhere('father_name', 'LIKE', '%' . $this->client . '%')

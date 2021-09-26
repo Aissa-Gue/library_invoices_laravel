@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use App\Models\Client;
 use App\Models\Order;
 use App\Models\OrderBook;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +67,6 @@ class OrdersController extends Controller
             $total_discountable_price = $discBooks->sale_price_sum - ($discBooks->sale_price_sum * $order->discount_percentage / 100);
         }
 
-
         return array(
             'order' => $order,
             'orderBooks' => $orderBooks,
@@ -111,6 +110,14 @@ class OrdersController extends Controller
         }
     }
 
+    public function totalDebts($order_id)
+    {
+        $order = Order::where('id', $order_id)->first();
+        return Order::where('client_id', $order->client_id)
+            ->select(DB::raw('sum(required_amount - paid_amount) As total_debts'))
+            ->first();
+    }
+
     public function showAllData(Request $request)
     {
         $lname = $request->get('last_name');
@@ -120,7 +127,8 @@ class OrdersController extends Controller
 
         //if role is [ADMIN] show all orders elseif [USER] hide orders where type= gift
         if (Auth::user()->role == 'admin') {
-            $orders = Order::join('clients', 'clients.id', '=', 'orders.client_id')
+            $orders = Order::join('clients', 'clients.person_id', '=', 'orders.client_id')
+                ->join('people', 'people.id', '=', 'orders.client_id')
                 ->where('last_name', 'LIKE', '%' . $lname . '%')
                 ->where('first_name', 'LIKE', '%' . $fname . '%')
                 ->where('type', 'LIKE', '%' . $type . '%')
@@ -130,7 +138,8 @@ class OrdersController extends Controller
                 ->paginate(15);
 
         } elseif (Auth::user()->role == 'seller') {
-            $orders = Order::join('clients', 'clients.id', '=', 'orders.client_id')
+            $orders = Order::join('clients', 'clients.person_id', '=', 'orders.client_id')
+                ->join('people', 'people.id', '=', 'orders.client_id')
                 ->where('last_name', 'LIKE', '%' . $lname . '%')
                 ->where('first_name', 'LIKE', '%' . $fname . '%')
                 ->where('type', 'LIKE', '%' . $type . '%')
@@ -170,7 +179,7 @@ class OrdersController extends Controller
         $total_purchase_price = $this->calculate($id)['total_purchase_price'];
         $total_sale_price = $this->calculate($id)['total_sale_price'];
         $total_discountable_price = $this->calculate($id)['total_discountable_price'];
-
+        $total_debts = $this->totalDebts($id);
         //redirect if the seller try to access to gift orders
         if ($this->isSellerAndGift($id)) {
             return redirect()->route('ordersList');
@@ -187,17 +196,16 @@ class OrdersController extends Controller
             $view = view('orders.print.sale_exhibition_A4');
         }
         return $view
-            ->with(compact('order', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price'));
+            ->with(compact('order', 'orderBooks', 'total_quantity', 'total_purchase_price', 'total_sale_price', 'total_discountable_price', 'total_debts'));
     }
 
     public function add($client_id = null)
     {
         if (!empty($client_id)) {
-            $client = Client::find($client_id);
+            $client = Person::join('clients', 'clients.person_id', 'people.id')->where('person_id', $client_id)->first();
             return view('orders.add_order')->with('client', $client);
         } else {
-            $clients = Client::all();
-            return view('orders.add_order')->with('clients', $clients);
+            return view('orders.add_order');
         }
 
     }
@@ -218,7 +226,7 @@ class OrdersController extends Controller
 
         $validated = $request->validate([
             'type' => 'required|alpha',
-            'client_id' => 'required|numeric|exists:clients,id',
+            'client_id' => 'required|numeric|exists:clients,person_id',
             'created_by' => 'required|numeric|exists:users,id',
             'updated_by' => 'required|numeric|exists:users,id',
             'discount_percentage' => 'required|numeric|min:0|max:100',
@@ -240,10 +248,11 @@ class OrdersController extends Controller
             return redirect()->back()->with(compact('paidAmountAlert'));
 
         } else {
-            $order = Order::find($id)->update($validated);
-            $this->updateRequiredAmount($id);
-            $this->updatedBy($id);
-
+            DB::transaction(function () use ($validated, $id) {
+                $order = Order::find($id)->update($validated);
+                $this->updateRequiredAmount($id);
+                $this->updatedBy($id);
+            });
             return redirect(Route('editOrder', $id));
         }
     }
@@ -290,14 +299,16 @@ class OrdersController extends Controller
             'sale_price' => 'required|numeric',
         ]);
 
-        OrderBook::Create($validated);
-        $this->updateRequiredAmount($id);
+        DB::transaction(function () use ($request, $validated, $id) {
+            OrderBook::Create($validated);
+            $this->updateRequiredAmount($id);
 
-        //updated by user
-        $this->updatedBy($id);
+            //updated by user
+            $this->updatedBy($id);
 
-        //decrement book stock
-        $this->decrementStock($request->book_id, $request->quantity);
+            //decrement book stock
+            $this->decrementStock($request->book_id, $request->quantity);
+        });
 
         return redirect(Route('editOrder', $id));
     }
@@ -306,21 +317,25 @@ class OrdersController extends Controller
     {
         $order_book = OrderBook::where('order_id', $id)->where('book_id', $book_id)->first();
 
-        //delete Book from order
-        OrderBook::where('order_id', $id)->where('book_id', $book_id)->delete();
-        $this->updateRequiredAmount($id);
-        //updated by user
-        $this->updatedBy($id);
-        //increment book stock
-        $this->incrementStock($book_id, $order_book->quantity);
+        DB::transaction(function () use ($order_book, $book_id, $id) {
+            //delete Book from order
+            OrderBook::where('order_id', $id)->where('book_id', $book_id)->forceDelete();
+            $this->updateRequiredAmount($id);
+            //updated by user
+            $this->updatedBy($id);
+            //increment book stock
+            $this->incrementStock($book_id, $order_book->quantity);
+        });
 
         return redirect(Route('editOrder', $id));
     }
 
     public function destroy($id)
     {
-        OrderBook::where('order_id', $id)->delete();
-        Order::where('id', $id)->delete();
+        DB::transaction(function () use ($id) {
+            OrderBook::where('order_id', $id)->delete();
+            Order::where('id', $id)->delete();
+        });
         return redirect(Route('ordersList'));
     }
 
@@ -376,21 +391,25 @@ class OrdersController extends Controller
 
     public function restoreTrashed($id)
     {
-        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id);
+        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id)->get();
         $trashedOrder = Order::onlyTrashed()->find($id);
 
-        $trashedOrderBook->restore();
-        $trashedOrder->restore();
+        DB::transaction(function () use ($trashedOrder, $trashedOrderBook) {
+            $trashedOrderBook->restore();
+            $trashedOrder->restore();
+        });
         return redirect()->back();
     }
 
     public function dropTrashed($id)
     {
-        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id);
+        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id)->get();
         $trashedOrder = Order::onlyTrashed()->find($id);
 
-        $trashedOrderBook->forceDelete();
-        $trashedOrder->forceDelete();
+        DB::transaction(function () use ($trashedOrder, $trashedOrderBook) {
+            $trashedOrderBook->forceDelete();
+            $trashedOrder->forceDelete();
+        });
         return redirect()->back();
     }
 }
