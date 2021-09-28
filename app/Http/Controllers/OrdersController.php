@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Order;
 use App\Models\OrderBook;
 use App\Models\Person;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +117,15 @@ class OrdersController extends Controller
         return Order::where('client_id', $order->client_id)
             ->select(DB::raw('sum(required_amount - paid_amount) As total_debts'))
             ->first();
+    }
+
+    public function deleteEmptyOrders()
+    {
+        Order::withTrashed()
+            ->leftjoin('order_books', 'order_books.order_id', 'orders.id')
+            ->where('order_id', null)
+            ->whereDate('orders.updated_at', '<', Carbon::today())
+            ->forceDelete();
     }
 
     public function showAllData(Request $request)

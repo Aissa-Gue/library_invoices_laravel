@@ -11,8 +11,9 @@
 <link rel="stylesheet" href="{{URL::asset('requirements/Fontawesome_pro_v6/css/all.css')}}">
 
 <!-- FONTS -->
-<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Scheherazade:wght@700&display=swap" rel="stylesheet">
+<link href="{{URL::asset('fonts/cairo.css')}}" rel="stylesheet">
+<link href="{{URL::asset('fonts/Scheherazade.css')}}" rel="stylesheet">
+
 <!-- MY CSS -->
 <link href="{{URL::asset('css/side-nav-bar.css')}}" rel="stylesheet">
 <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">

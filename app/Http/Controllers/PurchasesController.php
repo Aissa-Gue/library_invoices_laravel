@@ -7,6 +7,7 @@ use App\Models\Provider;
 use App\Models\Person;
 use App\Models\Purchase;
 use App\Models\PurchaseBook;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -99,6 +100,14 @@ class PurchasesController extends Controller
         return redirect()->back()->with(compact('purchasePriceAlert'));
     }
 
+    public function deleteEmptyPurchases()
+    {
+        Purchase::withTrashed()
+            ->leftjoin('purchase_books', 'purchase_books.purchase_id', 'purchases.id')
+            ->where('purchase_id', null)
+            ->whereDate('purchases.updated_at', '<', Carbon::today())
+            ->forceDelete();
+    }
 
     public function showAllData(Request $request)
     {
