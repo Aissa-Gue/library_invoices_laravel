@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 class ClientsImport implements ToCollection, WithStartRow
 {
     public $person;
+    public $person_id;
 
     public function currentPerson($phone)
     {
@@ -61,21 +62,20 @@ class ClientsImport implements ToCollection, WithStartRow
                 /* Person EXIST */
                 //Get the person id
                 if (!empty($qryPhone1)) {
-                    $this->person = $qryPhone1->id;
+                    $this->person_id = $qryPhone1->id;
 
                 } elseif (!empty($qryPhone2)) {
-                    $this->person = $qryPhone2->id;
+                    $this->person_id = $qryPhone2->id;
                 }
                 //Add person to clients table if not exist
-                if ($this->isExist($this->person->id) == false) {
+                if ($this->isExist($this->person_id) == false) {
                     Client::create([
-                        'person_id' => $this->person->id,
+                        'person_id' => $this->person_id,
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now()
                     ]);
                 }
             }
-
         }
     }
 

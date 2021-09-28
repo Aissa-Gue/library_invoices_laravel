@@ -79,7 +79,7 @@ class PurchasesController extends Controller
     public function updateSalePercentage($id, Request $request)
     {
         $validated = $request->validate([
-            'sale_percentage' => 'required|numeric|min:0|max:30'
+            'sale_percentage' => 'required|numeric|in:0,10,15,20,25,30'
         ]);
 
         $book = Book::where('id', $id)->first();
@@ -111,7 +111,10 @@ class PurchasesController extends Controller
             ->join('people', 'people.id', 'providers.person_id')
             ->where('last_name', 'LIKE', '%' . $lname . '%')
             ->where('first_name', 'LIKE', '%' . $fname . '%')
-            ->where('establishment', 'LIKE', '%' . $establishment . '%')
+            ->where(function ($query) use ($establishment) {
+                $query->where('establishment', 'LIKE', '%' . $establishment . '%')
+                    ->orWhere('establishment', '=', null);
+            })
             ->where('purchases.id', 'LIKE', '%' . $purchase_id)
             ->select('purchases.id', 'purchases.required_amount', 'purchases.paid_amount', 'purchases.created_at', 'last_name', 'first_name', 'father_name', 'establishment')
             ->orderBy('purchases.created_at', 'DESC')
@@ -295,24 +298,18 @@ class PurchasesController extends Controller
 
     public function restoreTrashed($id)
     {
-        $trashedPurchaseBook = PurchaseBook::onlyTrashed()->where('purchase_id', $id)->get();
-        $trashedPurchase = Purchase::onlyTrashed()->find($id);
-
-        DB::transaction(function () use ($trashedPurchase, $trashedPurchaseBook) {
-            $trashedPurchaseBook->restore();
-            $trashedPurchase->restore();
+        DB::transaction(function () use ($id) {
+            PurchaseBook::where('purchase_id', $id)->restore();
+            Purchase::where('id', $id)->restore();
         });
         return redirect()->back();
     }
 
     public function dropTrashed($id)
     {
-        $trashedPurchaseBook = PurchaseBook::onlyTrashed()->where('purchase_id', $id)->get();
-        $trashedPurchase = Purchase::onlyTrashed()->find($id);
-
-        DB::transaction(function () use ($trashedPurchase, $trashedPurchaseBook) {
-            $trashedPurchaseBook->forceDelete();
-            $trashedPurchase->forceDelete();
+        DB::transaction(function () use ($id) {
+            PurchaseBook::where('purchase_id', $id)->forceDelete();
+            Purchase::where('id', $id)->forceDelete();
         });
         return redirect()->back();
     }

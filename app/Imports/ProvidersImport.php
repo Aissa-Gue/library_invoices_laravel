@@ -13,6 +13,7 @@ class ProvidersImport implements ToCollection, WithStartRow
 {
 
     public $person;
+    public $person_id;
 
     public function currentPerson($phone)
     {
@@ -46,7 +47,6 @@ class ProvidersImport implements ToCollection, WithStartRow
                     'last_name' => $row[0],
                     'first_name' => $row[1],
                     'father_name' => $row[2],
-                    'establishment' => $row[3],
                     'address' => $row[4],
                     'phone1' => $row[5],
                     'phone2' => $row[6]
@@ -54,6 +54,7 @@ class ProvidersImport implements ToCollection, WithStartRow
 
                 Provider::create([
                     'person_id' => $this->person->id,
+                    'establishment' => $row[3],
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);
@@ -62,15 +63,16 @@ class ProvidersImport implements ToCollection, WithStartRow
                 /* Person EXIST */
                 //Get the person id
                 if (!empty($qryPhone1)) {
-                    $this->person = $qryPhone1->id;
+                    $this->person_id = $qryPhone1->id;
 
                 } elseif (!empty($qryPhone2)) {
-                    $this->person = $qryPhone2->id;
+                    $this->person_id = $qryPhone2->id;
                 }
                 //Add person to providers table if not exist
-                if ($this->isExist($this->person->id) == false) {
+                if ($this->isExist($this->person_id) == false) {
                     Provider::create([
-                        'person_id' => $this->person->id,
+                        'person_id' => $this->person_id,
+                        'establishment' => $row[3],
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now()
                     ]);

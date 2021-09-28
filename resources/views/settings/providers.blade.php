@@ -8,6 +8,16 @@
         <div class="col-md-12">
             <h4><i class="fas fa-user-alt fs-5"></i> إدارة قائمة المزودين</h4>
             <hr>
+            @if(session()->has('importProvidersAlert'))
+                <div class="alert alert-success alert-dismissible d-flex align-items-center fw-bold mt-3" role="alert">
+                    <i class="fas fa-check-circle me-2 fs-5"></i>
+                    <div>
+                        {{session()->get('importProvidersAlert')}}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <form method="post" action="{{Route('importExcelProviders')}}" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group row mb-3">

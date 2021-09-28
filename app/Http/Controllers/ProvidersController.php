@@ -45,13 +45,24 @@ class ProvidersController extends Controller
         return view('providers.add_provider');
     }
 
+    public function addAsClient($id)
+    {
+        $client = Client::where('person_id', $id)->first();
+        if (empty($client)) {
+            Client::Create(['person_id' => $id]);
+            return redirect()->route('clientsList');
+        } else {
+            $clientExistAlert = "المزود موجود مسبقا في قائمة الزبائن !";
+            return redirect()->back()->with(compact('clientExistAlert'));
+        }
+    }
 
     public function store(Request $request)
     {
         $validatedPerson = $request->validate([
-            'last_name' => 'required',
-            'first_name' => 'required',
-            'father_name' => 'required',
+            'last_name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'first_name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'father_name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'nullable',
             'phone1' => 'required|numeric|unique:people,phone1|unique:people,phone2',
             'phone2' => 'required|numeric|unique:people,phone1|unique:people,phone2',
@@ -89,9 +100,9 @@ class ProvidersController extends Controller
     {
         //$request->flash();
         $validatedPerson = $request->validate([
-            'last_name' => 'alpha|required',
-            'first_name' => 'alpha|required',
-            'father_name' => 'alpha|required',
+            'last_name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'first_name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'father_name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'nullable',
             'phone1' => 'required|numeric|unique:people,phone1,' . $id . '|unique:people,phone2,' . $id,
             'phone2' => 'nullable|numeric|unique:people,phone1,' . $id . '|unique:people,phone2,' . $id,
@@ -129,7 +140,8 @@ class ProvidersController extends Controller
     {
         Excel::import(new ProvidersImport, request()->file('providers_file'));
 
-        return redirect(Route('providersList'))->with('success', 'All good!');
+        $importProvidersAlert = "تم استيراد قائمة المزودين بنجاح";
+        return redirect()->back()->with(compact('importProvidersAlert'));
     }
 
     function exportExcel()

@@ -243,7 +243,7 @@ class OrdersController extends Controller
         ]);
 
         //test if paid_amount > required_amount
-        if ($request->paid_amount > $this->calculate($id)['total_purchase_price']) {
+        if ($request->paid_amount > $this->calculate($id)['total_discountable_price']) {
             $paidAmountAlert = "خطأ: لا يمكن أن يكون المبلغ المدفوع أكبر من المبلغ المستحق !";
             return redirect()->back()->with(compact('paidAmountAlert'));
 
@@ -339,47 +339,6 @@ class OrdersController extends Controller
         return redirect(Route('ordersList'));
     }
 
-    /******* SALE BY PIECES ******/
-    public function showSale(Request $request)
-    {
-        $book_data = "";
-
-        if ($request->filled('book_id', 'quantity')) {
-
-            //get book info
-            $book = explode(' # ', $request->book_id);
-            $current_book = Book::find($book[0]);
-
-            $book_data = array("book_id" => $book[0],
-                "title" => $book[1],
-                "quantity" => $request->quantity,
-                "salePrice" => $current_book->purchase_price + ($current_book->purchase_price * $current_book->sale_percentage / 100),
-                "totalSalePrice" => ($current_book->purchase_price + ($current_book->purchase_price * $current_book->sale_percentage / 100)) * $request->quantity);
-        }
-
-        return view('orders.sales.sale')
-            ->with('book_data', $book_data);
-    }
-
-
-    public function updateStock(Request $request)
-    {
-        //get book info
-        $currentBook = Book::find($request->book_id);
-
-        $validated = $request->validate([
-            'book_id' => 'required|numeric|exists:books,id',
-            'quantity' => 'required|numeric|min:1|max:' . $currentBook->quantity,
-        ]);
-
-        //decrement book stock
-        $currentBook->decrement('quantity', $request->quantity);
-
-        $message = "تم بيع " . $request->quantity . " نسخ من كتاب: " . $currentBook->title;
-
-        return view('orders.sales.sale')
-            ->with('message', $message);
-    }
 
     /******* TRASHED ORDERS *******/
     public function showTrashed()
@@ -391,24 +350,18 @@ class OrdersController extends Controller
 
     public function restoreTrashed($id)
     {
-        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id)->get();
-        $trashedOrder = Order::onlyTrashed()->find($id);
-
-        DB::transaction(function () use ($trashedOrder, $trashedOrderBook) {
-            $trashedOrderBook->restore();
-            $trashedOrder->restore();
+        DB::transaction(function () use ($id) {
+            OrderBook::where('order_id', $id)->restore();
+            Order::where('id', $id)->restore();
         });
         return redirect()->back();
     }
 
     public function dropTrashed($id)
     {
-        $trashedOrderBook = OrderBook::onlyTrashed()->where('order_id', $id)->get();
-        $trashedOrder = Order::onlyTrashed()->find($id);
-
-        DB::transaction(function () use ($trashedOrder, $trashedOrderBook) {
-            $trashedOrderBook->forceDelete();
-            $trashedOrder->forceDelete();
+        DB::transaction(function () use ($id) {
+            OrderBook::where('order_id', $id)->forceDelete();
+            Order::where('id', $id)->forceDelete();
         });
         return redirect()->back();
     }

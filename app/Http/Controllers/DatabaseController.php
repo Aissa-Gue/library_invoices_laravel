@@ -32,11 +32,12 @@ class DatabaseController extends Controller
         exec($command . ' 2>&1', $output);
 
         if (count($output) == 0) {
-            echo "<script>alert('تم استخراج قاعدة البيانات بنجاح، تفقد القرص المحلي (D)');</script>";
-            echo "<script> window.location.href= '/settings/database'</script>";
+            $successExportDbAlert = "تم استخراج نسخة احتياطية بنجاح، تفقد المسار: D:\library_invoices_backups";
+            return redirect()->back()->with(compact('successExportDbAlert'));
+
         } else {
-            echo "<script>alert('حدثت مشكلة ! لم يتم استخراج قاعدة البيانات ');</script>";
-            echo "<script> window.location.href= '/settings/database'</script>";
+            $failExportDbAlert = "حدثت مشكلة ! لم يتم استخراج قاعدة البيانات";
+            return redirect()->back()->with(compact('failExportDbAlert'));
         }
     }
 
@@ -91,11 +92,11 @@ class DatabaseController extends Controller
                 and $file_name != ""
             ) {
                 unlink("$file_name");
-                echo "<script>alert('Database imported successfully!')</script>";
-                echo '<script>window.location.href = "/settings/database"</script>'; // redirect to home.php
+                $successImportDbAlert = "تم استيراد قاعدة البيانات بنجاح";
+                return redirect()->back()->with(compact('successImportDbAlert'));
             } else {
-                echo "<script>alert('Something wrong! database not imported !')</script>";
-                echo '<script>window.location.href = "/settings/database"</script>'; // redirect to home.php
+                $failImportDbAlert = "حدثت مشكلة ! لم يتم استيراد قاعدة البيانات";
+                return redirect()->back()->with(compact('failImportDbAlert'));
             }
         }
     }
@@ -116,6 +117,8 @@ class DatabaseController extends Controller
         }
         DB::statement("SET foreign_key_checks=1");
 
-        return redirect('settings/database');
+        $dropDbAlert = "تم حذف قاعدة البيانات بنجاح";
+        return redirect()->back()->with(compact('dropDbAlert'));
+
     }
 }

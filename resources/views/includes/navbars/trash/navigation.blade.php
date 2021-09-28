@@ -7,7 +7,7 @@
         background-color: rgba(21, 82, 213, 0.1);
         padding: 2px 0;
         border-radius: 25px;
-        width: 65vw;
+        width: 80vw;
         margin: auto;
     }
 
@@ -26,8 +26,14 @@
                     class="fas fa-user"></i> الزبائن </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{Route::is('trashedProviders') ? 'active' : ''}}" href="{{Route('trashedProviders')}}"><i
+            <a class="nav-link {{Route::is('trashedProviders') ? 'active' : ''}}"
+               href="{{Route('trashedProviders')}}"><i
                     class="fas fa-user-tie"></i> المزودين </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {{Route::is('trashedSales') ? 'active' : ''}}" href="{{Route('trashedSales')}}"><i
+                    class="fas fa-shopping-cart"></i> المبيعات </a>
         </li>
 
         <li class="nav-item">
@@ -35,7 +41,8 @@
                     class="fas fa-file-invoice-dollar"></i> فواتير الزبائن </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{Route::is('trashedPurchases') ? 'active' : ''}}" href="{{Route('trashedPurchases')}}"><i
+            <a class="nav-link {{Route::is('trashedPurchases') ? 'active' : ''}}"
+               href="{{Route('trashedPurchases')}}"><i
                     class="fas fa-file-invoice-dollar"></i> فواتير المزودين </a>
         </li>
         <li class="nav-item">

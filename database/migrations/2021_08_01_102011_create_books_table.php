@@ -25,7 +25,6 @@ class CreateBooksTable extends Migration
             $table->integer('quantity');
             $table->integer('purchase_price');
             $table->decimal('sale_percentage',3,0);
-            $table->integer('sale_price');
             $table->boolean('discount');
             $table->timestamps();
             $table->softDeletes();

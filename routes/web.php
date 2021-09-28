@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     Route::get('providers/add', '\App\Http\Controllers\ProvidersController@add')->name('addProvider');
     Route::post('providers/add', '\App\Http\Controllers\ProvidersController@store')->name('addProvider');
+    Route::post('providers/addAsClient/{id}', '\App\Http\Controllers\ProvidersController@addAsClient')->name('addAsClient');
 
     Route::get('providers/list', '\App\Http\Controllers\ProvidersController@showAllData')->name('providersList');
     Route::get('providers/preview/{id}', '\App\Http\Controllers\ProvidersController@show')->name('previewProvider');
@@ -116,6 +117,11 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('trash/providers/restore/{id}', '\App\Http\Controllers\ProvidersController@restoreTrashed')->name('restoreTrashedProvider');
     Route::delete('trash/providers/delete/{id}', '\App\Http\Controllers\ProvidersController@dropTrashed')->name('deleteTrashedProvider');
 
+//Sales
+    Route::get('trash/sales', '\App\Http\Controllers\SalesController@showTrashed')->name('trashedSales');
+    Route::post('trash/sales/restore/{id}', '\App\Http\Controllers\SalesController@restoreTrashed')->name('restoreTrashedSale');
+    Route::delete('trash/sales/delete/{id}', '\App\Http\Controllers\SalesController@dropTrashed')->name('deleteTrashedSale');
+
 //Orders
     Route::get('trash/orders', '\App\Http\Controllers\OrdersController@showTrashed')->name('trashedOrders');
     Route::post('trash/orders/restore/{id}', '\App\Http\Controllers\OrdersController@restoreTrashed')->name('restoreTrashedOrder');
@@ -151,6 +157,7 @@ Route::get('books/delete/{id}', '\App\Http\Controllers\BooksController@destroy')
 
 Route::get('clients/add', '\App\Http\Controllers\ClientsController@add')->name('addClient');
 Route::post('clients/add', '\App\Http\Controllers\ClientsController@store')->name('addClient');
+Route::post('clients/addAsProvider/{id}', '\App\Http\Controllers\ClientsController@addAsProvider')->name('addAsProvider');
 
 Route::get('clients/list', '\App\Http\Controllers\ClientsController@showAllData')->name('clientsList');
 Route::get('clients/preview/{id}', '\App\Http\Controllers\ClientsController@show')->name('previewClient');
@@ -161,10 +168,14 @@ Route::post('clients/edit/{id}', '\App\Http\Controllers\ClientsController@update
 Route::get('clients/delete/{id}', '\App\Http\Controllers\ClientsController@destroy')->name('deleteClient');
 
 
-/******** ORDERS ********/
+/******** SALES ********/
 //sales
-Route::get('orders/sales/add', '\App\Http\Controllers\OrdersController@showSale')->name('addSale');
-Route::post('orders/sales/add', '\App\Http\Controllers\OrdersController@updateStock')->name('updateStock');
+Route::get('orders/sales/add', '\App\Http\Controllers\SalesController@addSale')->name('addSale');
+Route::post('orders/sales/add', '\App\Http\Controllers\SalesController@store')->name('updateStock');
+Route::post('orders/sales/delete/{id}', '\App\Http\Controllers\SalesController@destroy')->name('deleteSale');
+
+
+/******** ORDERS ********/
 
 //orders
 Route::get('orders/add/{client_id?}', '\App\Http\Controllers\OrdersController@add')->name('addOrder');

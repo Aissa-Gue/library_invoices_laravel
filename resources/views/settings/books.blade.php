@@ -9,6 +9,15 @@
         <div class="col-md-12">
             <h4><i class="fas fa-book-open fs-5"></i> إدارة قائمة الكتب</h4>
             <hr>
+            @if(session()->has('importBooksAlert'))
+                <div class="alert alert-success alert-dismissible d-flex align-items-center fw-bold mt-3" role="alert">
+                    <i class="fas fa-check-circle me-2 fs-5"></i>
+                    <div>
+                        {{session()->get('importBooksAlert')}}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
             <form method="post" action="{{Route('importExcelBooks')}}" enctype="multipart/form-data">
                 @csrf

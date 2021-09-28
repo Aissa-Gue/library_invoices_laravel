@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Order;
 use App\Models\Purchase;
+use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,33 +16,50 @@ class DashboardController extends Controller
     {
         /******* CARDS *******/
         //books
-        $total_books = Book::select(DB::raw('COUNT(*) as total_books'))->first();
+        $monthly_books = Book::select(DB::raw('COUNT(*) as monthly_books'))
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->first();
         $yearly_books = Book::select(DB::raw('COUNT(*) as yearly_books'))
             ->whereYear('created_at', Carbon::now()->year)
             ->first();
 
         //orders
-        $total_orders = Order::select(DB::raw('COUNT(*) as total_orders'))->first();
+        $monthly_orders = Order::select(DB::raw('COUNT(*) as monthly_orders'))
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->first();
         $yearly_orders = Order::select(DB::raw('COUNT(*) as yearly_orders'))
             ->whereYear('created_at', Carbon::now()->year)
             ->first();
 
         //Debts
-        $total_debts = Order::select(DB::raw('SUM(required_amount - paid_amount) as total_debts'))->first();
+        $monthly_debts = Order::select(DB::raw('SUM(required_amount - paid_amount) as monthly_debts'))
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->first();
         $yearly_debts = Order::select(DB::raw('SUM(required_amount - paid_amount) as yearly_debts'))
             ->whereYear('created_at', Carbon::now()->year)
             ->first();
 
+        //sales
+        $monthly_sales = Sale::select(DB::raw('SUM(sale_price * quantity) as monthly_sales'))
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->first();
+        $yearly_sales = Sale::select(DB::raw('SUM(sale_price * quantity) as monthly_sales'))
+            ->whereYear('created_at', Carbon::now()->year)
+            ->first();
+
         //paid amounts
-        $total_paid_amounts = Order::select(DB::raw('SUM(paid_amount) as total_paid_amounts'))->first();
+        $monthly_paid_amounts = Order::select(DB::raw('SUM(paid_amount) as monthly_paid_amounts'))
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->first();
         $yearly_paid_amounts = Order::select(DB::raw('SUM(paid_amount) as yearly_paid_amounts'))
             ->whereYear('created_at', Carbon::now()->year)
             ->first();
 
-        return compact('total_books', 'yearly_books',
-            'total_orders', 'yearly_orders',
-            'total_debts', 'yearly_debts',
-            'total_paid_amounts', 'yearly_paid_amounts');
+        return compact('monthly_books', 'yearly_books',
+            'monthly_orders', 'yearly_orders',
+            'monthly_debts', 'yearly_debts',
+            'monthly_sales', 'yearly_sales',
+            'monthly_paid_amounts', 'yearly_paid_amounts');
     }
 
     public function clientsDebts(Request $request)
@@ -56,8 +74,7 @@ class DashboardController extends Controller
             ->select('orders.id', 'client_id', 'orders.required_amount', 'orders.paid_amount', 'orders.created_at', 'last_name', 'first_name', 'father_name', DB::raw('SUM(required_amount - paid_amount) as debt_amount'))
             ->havingRaw('debt_amount > ?', [0])
             ->groupBy('orders.id')
-            ->orderBy('client_id')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('orders.created_at', 'DESC')
             ->paginate(15);
 
         return view('dashboard.clients_debts')
@@ -77,8 +94,7 @@ class DashboardController extends Controller
             ->select('purchases.id', 'provider_id', 'purchases.required_amount', 'purchases.paid_amount', 'purchases.created_at', 'last_name', 'first_name', 'father_name', DB::raw('SUM(required_amount - paid_amount) as debt_amount'))
             ->havingRaw('debt_amount > ?', [0])
             ->groupBy('purchases.id')
-            ->orderBy('person_id')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('purchases.created_at', 'DESC')
             ->paginate(15);
 
         return view('dashboard.providers_debts')
@@ -98,7 +114,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        return redirect()->route('clientsDebts');
+        return redirect()->route('stockAlerts');
 
         /*
         $monthly_paid_amounts = Order::join('order__books', 'order__books.order_id', 'orders.id')

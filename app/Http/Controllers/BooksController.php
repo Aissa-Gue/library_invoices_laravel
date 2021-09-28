@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\BooksExport;
 use App\Imports\BooksImport;
 use App\Models\OrderBook;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Validator;
@@ -50,7 +51,7 @@ class BooksController extends Controller
             'edition' => 'string',
             'quantity' => 'required|numeric',
             'purchase_price' => 'required|numeric',
-            'sale_percentage' => 'required|numeric|min:0|max:30',
+            'sale_percentage' => 'required|numeric|in:0,10,15,20,25,30',
             'discount' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -76,7 +77,7 @@ class BooksController extends Controller
             'edition' => 'string',
             'quantity' => 'required|numeric',
             'purchase_price' => 'required|numeric',
-            'sale_percentage' => 'required|numeric|min:0|max:30',
+            'sale_percentage' => 'required|numeric|in:0,10,15,20,25,30',
             'discount' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -100,7 +101,8 @@ class BooksController extends Controller
     {
         Excel::import(new BooksImport, request()->file('books_file'));
 
-        return redirect(Route('booksList'))->with('success', 'All good!');
+        $importBooksAlert = "تم استيراد قائمة الكتب بنجاح";
+        return redirect()->back()->with(compact('importBooksAlert'));
     }
 
     function exportExcel()
@@ -109,28 +111,31 @@ class BooksController extends Controller
     }
 
     /******* TRASHED BOOKS *******/
-    public function showTrashed(){
+    public function showTrashed()
+    {
         $trashedBooks = Book::onlyTrashed()->paginate(15);
         return view('trash.books')
             ->with(compact('trashedBooks'));
     }
 
-    public function restoreTrashed($id){
-        $trashedBook = Book::onlyTrashed()->find($id);
-        $trashedBook->restore();
+    public function restoreTrashed($id)
+    {
+        Book::where('id', $id)->restore();
         return redirect()->back();
     }
 
-    public function dropTrashed($id){
+    public function dropTrashed($id)
+    {
         //test if book exist in order
-        $bookOrders = OrderBook::where('book_id',$id)->get();
+        $bookOrders = OrderBook::where('book_id', $id)->get();
+        //test if book exist in sale
+        $bookSales = Sale::where('book_id', $id)->get();
 
-        if($bookOrders->isEmpty()){
-            $trashedBook = Book::onlyTrashed()->find($id);
-            $trashedBook->forceDelete();
+        if ($bookOrders->isEmpty() and $bookSales->isEmpty()) {
+            Book::where('id', $id)->forceDelete();
             return redirect()->back();
-        }else{
-            $deleteProblem = 'لا يمكنك حذف الكتاب لوجود فواتير مرتبطة به';
+        } else {
+            $deleteProblem = 'لا يمكنك حذف الكتاب لوجود فواتير / مبيعات مرتبطة به';
             return redirect()->back()->with(compact('deleteProblem'));
         }
     }
