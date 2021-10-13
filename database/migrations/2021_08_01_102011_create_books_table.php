@@ -22,7 +22,7 @@ class CreateBooksTable extends Migration
             $table->string('publisher')->nullable();
             $table->integer('publication_year')->nullable();
             $table->string('edition')->nullable();
-            $table->integer('quantity');
+            $table->integer('quantity')->default(0);
             $table->integer('purchase_price');
             $table->decimal('sale_percentage',3,0);
             $table->boolean('discount');

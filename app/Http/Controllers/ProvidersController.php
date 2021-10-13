@@ -65,7 +65,7 @@ class ProvidersController extends Controller
             'father_name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'nullable',
             'phone1' => 'required|numeric|unique:people,phone1|unique:people,phone2',
-            'phone2' => 'required|numeric|unique:people,phone1|unique:people,phone2',
+            'phone2' => 'nullable|numeric|unique:people,phone1|unique:people,phone2',
         ]);
 
         DB::beginTransaction();

@@ -79,6 +79,7 @@
 
 
                 <div class="col-md-4">
+                    <!--
                     <div class="row mb-2">
                         <div class="col-md-6">
                             <label class="form-label" for="quantity">الكمية</label>
@@ -89,6 +90,7 @@
                             @enderror
                         </div>
                     </div>
+                    -->
 
                     <div class="row mb-2">
                         <div class="col-md-6">
