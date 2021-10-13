@@ -16,6 +16,7 @@ class DatabaseController extends Controller
     {
         $username = env('DB_USERNAME');
         $dbname = env('DB_DATABASE');
+		$dbport = env('DB_PORT');
         $ignoreUsers = '--ignore-table=' . $dbname . '.users';
         $ignoreMigrations = '--ignore-table=' . $dbname . '.migrations';
 
@@ -27,7 +28,7 @@ class DatabaseController extends Controller
             mkdir($dir, 0777, true);
         }
 
-        $command = "C:/xampp/mysql/bin/mysqldump.exe -u $username $dbname $ignoreUsers $ignoreMigrations >" . $path;
+        $command = "C:/xampp/mysql/bin/mysqldump.exe -u $username --port=$dbport $dbname $ignoreUsers $ignoreMigrations >" . $path;
 
         exec($command . ' 2>&1', $output);
 
@@ -51,7 +52,7 @@ class DatabaseController extends Controller
             $file_temp = $_FILES['db']['tmp_name'];
             move_uploaded_file($file_temp, "$file_name");
 
-            $servername = env('DB_HOST');
+            $servername = env('DB_HOST').':'.env('DB_PORT');
             $username = env('DB_USERNAME');
             $password = env('DB_PASSWORD');
             $dbname = env('DB_DATABASE');

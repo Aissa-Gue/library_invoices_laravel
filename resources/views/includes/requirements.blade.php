@@ -1,3 +1,4 @@
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
 <!-- jquery-->
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>-->
 <script src="{{URL::asset('requirements/jquery-3.6.0.slim.min.js')}}"></script>

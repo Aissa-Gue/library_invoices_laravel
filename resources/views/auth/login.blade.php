@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('includes.requirements')
 
-    <title>برنامج الفواتير</title>
+    <title>المكتبة المركزية | برنامج الفواتير</title>
 </head>
 <style>
     .login-form-wrap {

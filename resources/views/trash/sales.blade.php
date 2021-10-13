@@ -28,7 +28,7 @@
                 <tbody>
                 @if($trashedSales->isEmpty())
                     <tr class="fw-bold text-center text-danger">
-                        <td colspan="6" class="py-4"><i class="fas fa-exclamation-triangle fs-4 mb-3"></i><br> لا توجد
+                        <td colspan="8" class="py-4"><i class="fas fa-exclamation-triangle fs-4 mb-3"></i><br> لا توجد
                             مبيعات محذوفة !
                         </td>
                     </tr>
