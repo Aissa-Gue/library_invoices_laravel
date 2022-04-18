@@ -12,14 +12,14 @@ class ExportDbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'db:backup';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create library_invoices backup';
 
     /**
      * Create a new command instance.

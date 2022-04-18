@@ -66,43 +66,12 @@
     .form input[type="submit"]:hover {
         background: #111;
     }
-
-    .my_logo {
-        position: relative;
-        transform: scale(0.33);
-        bottom: -68px;
-        right: -195px;
-    }
 </style>
 
 <body class="my_bg">
 <div class="login-form-wrap">
     <div class="col-md-7 align-self-end">
-        <div class="my_logo">
-            <a href="" data-bs-toggle="modal" data-bs-target="#info">
-                <img src="{{asset('img/aissaGue.png')}}" alt="Developped By Aissa.Gue">
-            </a>
-        </div>
-        <!-- Modal -->
-        <div class="modal fade" id="info" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">برنامج الفواتير</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-end">
-                        <p><span class="fw-bold">Developped By: </span> Aissa Guellil</p>
-                        <p><span class="fw-bold">Phone: </span> +213554005029</p>
-                        <p><span class="fw-bold">Email: </span> AissaStarDz@gmail.com</p>
-                        <p class="text-left"><span>- </span>September 2021<span> -</span></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </div>
 
     <div class="col-md-5">
