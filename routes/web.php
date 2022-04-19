@@ -44,9 +44,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('providers/preview/{id}', '\App\Http\Controllers\ProvidersController@show')->name('previewProvider');
 
     Route::get('providers/edit/{id}', '\App\Http\Controllers\ProvidersController@edit')->name('editProvider');
-    Route::post('providers/edit/{id}', '\App\Http\Controllers\ProvidersController@update')->name('editProvider');
+    Route::put('providers/edit/{id}', '\App\Http\Controllers\ProvidersController@update')->name('editProvider');
 
-    Route::get('providers/delete/{id}', '\App\Http\Controllers\ProvidersController@destroy')->name('deleteProvider');
+    Route::delete('providers/delete/{id}', '\App\Http\Controllers\ProvidersController@destroy')->name('deleteProvider');
 
 
     /******** PURCHASES ********/
@@ -61,82 +61,81 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('purchases/print/{id}', '\App\Http\Controllers\PurchasesController@print')->name('printPurchase');
 
     Route::get('purchases/edit/{id}', '\App\Http\Controllers\PurchasesController@edit')->name('editPurchase');
-    Route::post('purchases/edit/{id}', '\App\Http\Controllers\PurchasesController@update')->name('editPurchase');
-    Route::post('purchases/edit/salePercentage/{id}', '\App\Http\Controllers\PurchasesController@updateSalePercentage')->name('editSalePercentage');
+    Route::put('purchases/edit/{id}', '\App\Http\Controllers\PurchasesController@update')->name('editPurchase');
+    Route::put('purchases/edit/salePercentage/{id}', '\App\Http\Controllers\PurchasesController@updateSalePercentage')->name('editSalePercentage');
 
     Route::delete('purchases/delete/{id}/{book_id}', '\App\Http\Controllers\PurchasesController@destroyBook')->name('deletePurchaseBook');
     Route::delete('purchases/delete/{id}', '\App\Http\Controllers\PurchasesController@destroy')->name('deletePurchase');
 
 
     /********* Settings *********/
-//Database
+    //Database
     Route::get('settings/database', '\App\Http\Controllers\DatabaseController@show')->name('settingsDatabase');
-    Route::get('settings/dropDB', '\App\Http\Controllers\DatabaseController@dropDB')->name('dropDB');
+    Route::delete('settings/dropDB', '\App\Http\Controllers\DatabaseController@dropDB')->name('dropDB');
     Route::post('settings/importDB', '\App\Http\Controllers\DatabaseController@importDB')->name('importDB');
     Route::get('settings/exportDB', '\App\Http\Controllers\DatabaseController@exportDB')->name('exportDB');
 
-//Books
+    //Books
     Route::get('settings/books', '\App\Http\Controllers\BooksController@settingBooks')->name('settingsBooks');
     Route::post('settings/importExcelBooks', '\App\Http\Controllers\BooksController@importExcel')->name('importExcelBooks');
     Route::get('settings/exportExcelBooks', '\App\Http\Controllers\BooksController@exportExcel')->name('exportExcelBooks');
 
-//Clients
+    //Clients
     Route::get('settings/clients', '\App\Http\Controllers\ClientsController@settingClients')->name('settingsClients');
     Route::post('settings/importExcelClients', '\App\Http\Controllers\ClientsController@importExcel')->name('importExcelClients');
     Route::get('settings/exportExcelClients', '\App\Http\Controllers\ClientsController@exportExcel')->name('exportExcelClients');
 
-//Providers
+    //Providers
     Route::get('settings/providers', '\App\Http\Controllers\ProvidersController@settingProviders')->name('settingsProviders');
     Route::post('settings/importExcelProviders', '\App\Http\Controllers\ProvidersController@importExcel')->name('importExcelProviders');
     Route::get('settings/exportExcelProviders', '\App\Http\Controllers\ProvidersController@exportExcel')->name('exportExcelProviders');
 
-//Accounts
+    //Accounts
     Route::get('settings/accounts/add', '\App\Http\Controllers\UsersController@showAdd')->name('settingsAddAccount');
     Route::post('settings/accounts/add', '\App\Http\Controllers\UsersController@store')->name('createAccount');
 
     Route::get('settings/accounts/edit', '\App\Http\Controllers\UsersController@showEdit')->name('settingsEditAccount');
-    Route::post('settings/accounts/edit', '\App\Http\Controllers\UsersController@update')->name('updateAccount');
+    Route::put('settings/accounts/edit', '\App\Http\Controllers\UsersController@update')->name('updateAccount');
 
     Route::get('settings/accounts/delete', '\App\Http\Controllers\UsersController@showDelete')->name('settingsDeleteAccount');
     Route::delete('settings/accounts/delete', '\App\Http\Controllers\UsersController@destroy')->name('deleteAccount');
 
     /********* Trash *********/
 
-//Books
+    //Books
     Route::get('trash/books', '\App\Http\Controllers\BooksController@showTrashed')->name('trashedBooks');
     Route::post('trash/books/restore/{id}', '\App\Http\Controllers\BooksController@restoreTrashed')->name('restoreTrashedBook');
     Route::delete('trash/books/delete/{id}', '\App\Http\Controllers\BooksController@dropTrashed')->name('deleteTrashedBook');
 
-//Clients
+    //Clients
     Route::get('trash/clients', '\App\Http\Controllers\ClientsController@showTrashed')->name('trashedClients');
     Route::post('trash/clients/restore/{id}', '\App\Http\Controllers\ClientsController@restoreTrashed')->name('restoreTrashedClient');
     Route::delete('trash/clients/delete/{id}', '\App\Http\Controllers\ClientsController@dropTrashed')->name('deleteTrashedClient');
 
-//Providers
+    //Providers
     Route::get('trash/providers', '\App\Http\Controllers\ProvidersController@showTrashed')->name('trashedProviders');
     Route::post('trash/providers/restore/{id}', '\App\Http\Controllers\ProvidersController@restoreTrashed')->name('restoreTrashedProvider');
     Route::delete('trash/providers/delete/{id}', '\App\Http\Controllers\ProvidersController@dropTrashed')->name('deleteTrashedProvider');
 
-//Sales
+    //Sales
     Route::get('trash/sales', '\App\Http\Controllers\SalesController@showTrashed')->name('trashedSales');
     Route::post('trash/sales/restore/{id}', '\App\Http\Controllers\SalesController@restoreTrashed')->name('restoreTrashedSale');
     Route::delete('trash/sales/delete/{id}', '\App\Http\Controllers\SalesController@dropTrashed')->name('deleteTrashedSale');
 
-//Orders
+    //Orders
     Route::get('trash/orders', '\App\Http\Controllers\OrdersController@showTrashed')->name('trashedOrders');
     Route::post('trash/orders/restore/{id}', '\App\Http\Controllers\OrdersController@restoreTrashed')->name('restoreTrashedOrder');
     Route::delete('trash/orders/delete/{id}', '\App\Http\Controllers\OrdersController@dropTrashed')->name('deleteTrashedOrder');
 
-//Purchases
+    //Purchases
     Route::get('trash/purchases', '\App\Http\Controllers\PurchasesController@showTrashed')->name('trashedPurchases');
     Route::post('trash/purchases/restore/{id}', '\App\Http\Controllers\PurchasesController@restoreTrashed')->name('restoreTrashedPurchase');
     Route::delete('trash/purchases/delete/{id}', '\App\Http\Controllers\PurchasesController@dropTrashed')->name('deleteTrashedPurchase');
 
-//Users
+    //Users
     Route::get('trash/users', '\App\Http\Controllers\UsersController@showTrashed')->name('trashedUsers');
     Route::post('trash/users/restore/{id}', '\App\Http\Controllers\UsersController@restoreTrashed')->name('restoreTrashedUser');
     Route::delete('trash/users/delete/{id}', '\App\Http\Controllers\UsersController@dropTrashed')->name('deleteTrashedUser');
-
 });
 
 /********* BOOKS *********/
@@ -148,9 +147,9 @@ Route::get('books/list', '\App\Http\Controllers\BooksController@showAllData')->n
 Route::get('books/preview/{id}', '\App\Http\Controllers\BooksController@show')->name('previewBook');
 
 Route::get('books/edit/{id}', '\App\Http\Controllers\BooksController@edit')->name('editBook');
-Route::post('books/edit/{id}', '\App\Http\Controllers\BooksController@update')->name('editBook');
+Route::put('books/edit/{id}', '\App\Http\Controllers\BooksController@update')->name('editBook');
 
-Route::get('books/delete/{id}', '\App\Http\Controllers\BooksController@destroy')->name('deleteBook');
+Route::delete('books/delete/{id}', '\App\Http\Controllers\BooksController@destroy')->name('deleteBook');
 
 
 /********* CLIENTS *********/
@@ -163,16 +162,16 @@ Route::get('clients/list', '\App\Http\Controllers\ClientsController@showAllData'
 Route::get('clients/preview/{id}', '\App\Http\Controllers\ClientsController@show')->name('previewClient');
 
 Route::get('clients/edit/{id}', '\App\Http\Controllers\ClientsController@edit')->name('editClient');
-Route::post('clients/edit/{id}', '\App\Http\Controllers\ClientsController@update')->name('editClient');
+Route::put('clients/edit/{id}', '\App\Http\Controllers\ClientsController@update')->name('editClient');
 
-Route::get('clients/delete/{id}', '\App\Http\Controllers\ClientsController@destroy')->name('deleteClient');
+Route::delete('clients/delete/{id}', '\App\Http\Controllers\ClientsController@destroy')->name('deleteClient');
 
 
 /******** SALES ********/
 //sales
 Route::get('orders/sales/add', '\App\Http\Controllers\SalesController@addSale')->name('addSale');
 Route::post('orders/sales/add', '\App\Http\Controllers\SalesController@store')->name('updateStock');
-Route::post('orders/sales/delete/{id}', '\App\Http\Controllers\SalesController@destroy')->name('deleteSale');
+Route::delete('orders/sales/delete/{id}', '\App\Http\Controllers\SalesController@destroy')->name('deleteSale');
 
 
 /******** ORDERS ********/
@@ -187,8 +186,7 @@ Route::get('orders/preview/{id}', '\App\Http\Controllers\OrdersController@show')
 Route::get('orders/print/{id}', '\App\Http\Controllers\OrdersController@print')->name('printOrder');
 
 Route::get('orders/edit/{id}', '\App\Http\Controllers\OrdersController@edit')->name('editOrder');
-Route::post('orders/edit/{id}', '\App\Http\Controllers\OrdersController@update')->name('editOrder');
+Route::put('orders/edit/{id}', '\App\Http\Controllers\OrdersController@update')->name('editOrder');
 
 Route::delete('orders/delete/{id}/{book_id}', '\App\Http\Controllers\OrdersController@destroyBook')->name('deleteOrderBook');
 Route::delete('orders/delete/{id}', '\App\Http\Controllers\OrdersController@destroy')->name('deleteOrder');
-
