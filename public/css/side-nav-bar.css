@@ -1,4 +1,10 @@
-
+@media (min-width: 992px) {
+    .my_fixed_content{
+        position: relative;
+        margin-right: 210px;
+        width: calc(100% - 210px);
+    }
+}
 /****** START SIDEBAR ******/
 .my_fixed_sidebar {
     position: fixed;
@@ -6,7 +12,9 @@
     z-index: 1030;
     font-size: 15.3px;
     font-weight: bold;
-    width: 200px;
+    width: 210px;
+    overflow: auto;
+    max-height: 100vh;
     /* background-color: #fff; */
 }
 
@@ -17,6 +25,18 @@
     background-color: var(--my_lightColor) /* #ecfaee #d1ecf1 */;
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     font-weight: bold;
+}
+
+.offcanvas {
+    width : 230px !important;
+    overflow: auto !important;
+    max-height: 100vh !important;
+}
+.offcanvas-body{
+    padding: 1px !important;
+}
+.offcanvas-body .my_fixed_sidebar{
+    width : 220px !important;
 }
 
 .nav-pills .nav-link.active,

@@ -14,20 +14,19 @@ class BookSearchBar extends Component
 
     public function render()
     {
-        if(!empty($this->order_id) or $this->isSaleByPieces == true){
-        $books = Book::where('id', 'LIKE', '%' . $this->title)
-            ->Where('title', 'LIKE', '%' . $this->title . '%')
-            ->where('quantity','>',0)
-            ->whereNotIn('books.id', function ($query) {
-                $query->select('book_id')
-                    ->from('order_books AS ob')
-                    ->where('ob.order_id', $this->order_id);
-            })->paginate(15);
-
-        }elseif (!empty($this->purchase_id)){
+        if (!empty($this->order_id) or $this->isSaleByPieces == true) {
             $books = Book::where('id', 'LIKE', '%' . $this->title)
                 ->Where('title', 'LIKE', '%' . $this->title . '%')
-                ->where('quantity','>',0)
+                ->where('quantity', '>', 0)
+                ->whereNotIn('books.id', function ($query) {
+                    $query->select('book_id')
+                        ->from('order_books AS ob')
+                        ->where('ob.order_id', $this->order_id);
+                })->paginate(15);
+        } elseif (!empty($this->purchase_id)) {
+            $books = Book::where('id', 'LIKE', '%' . $this->title)
+                ->Where('title', 'LIKE', '%' . $this->title . '%')
+                ->where('quantity', '>=', 0)
                 ->whereNotIn('books.id', function ($query) {
                     $query->select('book_id')
                         ->from('purchase_books AS pb')
