@@ -25,10 +25,19 @@
                     <span class="input-group-text w-25">المزود</span>
                     <input
                         value="{{ $purchase->provider->person->last_name .' ' .$purchase->provider->person->first_name .' بن ' .$purchase->provider->person->father_name }}"
-                        class="form-control" name="provider_id" id="provider_id" placeholder="أدخل اسم المزود" disabled>
+                        class="form-control" name="provider_id" id="provider_id" disabled>
                 </div>
             </div>
         </div>
+        @if ($purchase->provider->establishment)
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text w-25">المؤسسة</span>
+                    <input value="{{ $purchase->provider->establishment }}" class="form-control" name="provider_id"
+                        id="provider_id" disabled>
+                </div>
+            </div>
+        @endif
     </fieldset>
 
 
@@ -109,10 +118,12 @@
                                         class="text-success fw-bolder">{{ session()->get('title') }}</span>
                                 </h6>
                                 <h6 class="text-dark text-start fw-bold col-md-4"># نسبة البيع القديمة:
-                                    <span class="text-danger fw-bolder">{{ session()->get('oldSalePercentage') }} %</span>
+                                    <span class="text-danger fw-bolder">{{ session()->get('oldSalePercentage') }}
+                                        %</span>
                                 </h6>
                                 <h6 class="text-dark text-start fw-bold col-md-4"># سعر الشراء القديم:
-                                    <span class="text-danger fw-bolder">{{ session()->get('oldPurchasePrice') }} دج </span>
+                                    <span class="text-danger fw-bolder">{{ session()->get('oldPurchasePrice') }} دج
+                                    </span>
                                 </h6>
                                 <h6 class="text-dark text-start fw-bold col-md-4"># سعر البيع القديم:
                                     <span class="text-danger fw-bolder">{{ session()->get('oldSalePrice') }} دج </span>
@@ -126,8 +137,8 @@
                                         @method('PUT')
                                         <div class="input-group">
                                             <span class="input-group-text">تغيير نسبة البيع</span>
-                                            <select class="form-control text-center" name="sale_percentage" required>
-                                                <option>- اختر نسبة مئوية -</option>
+                                            <select class="form-select text-center" name="sale_percentage" required>
+                                                <option>اختر نسبة</option>
                                                 <option value="0">0%</option>
                                                 <option value="10">10%</option>
                                                 <option value="15">15%</option>

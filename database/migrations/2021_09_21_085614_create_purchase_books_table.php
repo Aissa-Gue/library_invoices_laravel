@@ -14,8 +14,13 @@ class CreatePurchaseBooksTable extends Migration
     public function up()
     {
         Schema::create('purchase_books', function (Blueprint $table) {
-            $table->foreignId('purchase_id')->references('id')->on('purchases');
-            $table->foreignId('book_id')->references('id')->on('books');
+			
+			$table->unsignedBigInteger('purchase_id');
+            $table->foreign('purchase_id')->references('id')->on('purchases');
+			
+			$table->unsignedBigInteger('book_id');
+            $table->foreign('book_id')->references('id')->on('books');
+			
             $table->integer('quantity');
             $table->integer('purchase_price');
             $table->timestamps();

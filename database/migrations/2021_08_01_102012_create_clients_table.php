@@ -14,8 +14,9 @@ class CreateClientsTable extends Migration
     public function up()
     {
         Schema::create('clients', function (Blueprint $table) {
-            $table->integer('person_id')->unsigned()->unique();
-            $table->foreignId('person_id')->references('id')->on('people');
+			$table->unsignedBigInteger('person_id')->unique();
+            $table->foreign('person_id')->references('id')->on('people');
+			
             $table->timestamps();
             $table->softDeletes();
         });

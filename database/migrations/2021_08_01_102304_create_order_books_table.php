@@ -14,9 +14,13 @@ class CreateOrderBooksTable extends Migration
     public function up()
     {
         Schema::create('order_books', function (Blueprint $table) {
-            $table->foreignId('order_id')->references('id')->on('orders');
-            $table->foreignId('book_id')->references('id')->on('books');
-            $table->integer('quantity');
+			$table->unsignedBigInteger('order_id');
+            $table->foreign('order_id')->references('id')->on('orders');
+			
+			$table->unsignedBigInteger('book_id');
+            $table->foreign('book_id')->references('id')->on('books');
+            
+			$table->integer('quantity');
             $table->integer('purchase_price');
             $table->integer('sale_price');
             $table->timestamps();

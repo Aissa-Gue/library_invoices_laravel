@@ -1,6 +1,6 @@
 <style>
     #navigation li {
-        margin: 0px 10px;
+        margin: 0px 2px;
     }
 
     #navigation ul {
@@ -23,8 +23,8 @@
                 href="{{ Route('settingsDatabase') }}"><i class="fas fa-database"></i> قاعدة البيانات</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ Route::is('settingsBooks') ? 'active' : '' }}" href="{{ Route('settingsBooks') }}"><i
-                    class="fas fa-book-open"></i> قائمة الكتب</a>
+            <a class="nav-link {{ Route::is('settingsBooks') ? 'active' : '' }}"
+                href="{{ Route('settingsBooks') }}"><i class="fas fa-book-open"></i> قائمة الكتب</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ Route::is('settingsClients') ? 'active' : '' }}"

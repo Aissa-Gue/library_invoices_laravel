@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-7 mb-2">
+                        <div class="col-md-9 mb-2">
                             <label class="form-label" for="author">المؤلف</label>
                             <input type="text" class="form-control" name="author" id="author" placeholder="أدخل المؤلف"
                                 value="{{ old('author') ?? $book->author }}">
@@ -36,7 +36,7 @@
                                 <div class="form-text text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-7 mb-2">
+                        <div class="col-md-9 mb-2">
                             <label class="form-label" for="investigator">المحقق</label>
                             <input type="text" class="form-control" name="investigator" id="investigator"
                                 placeholder="أدخل المحقق" value="{{ old('investigator') ?? $book->investigator }}">
@@ -44,7 +44,7 @@
                                 <div class="form-text text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-7 mb-2">
+                        <div class="col-md-9 mb-2">
                             <label class="form-label" for="translator">المترجم</label>
                             <input type="text" class="form-control" name="translator" id="translator"
                                 placeholder="أدخل المترجم" value="{{ old('translator') ?? $book->translator }}">
@@ -87,21 +87,21 @@
 
                 <div class="col-md-4">
                     <!--
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <label class="form-label" for="quantity">الكمية</label>
-                                <input type="number" class="form-control" name="quantity" id="quantity"
-                                       placeholder="أدخل عدد الكتب" value="{{ old('quantity') ?? $book->quantity }}">
-                                @error('quantity')
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-6">
+                                                                            <label class="form-label" for="quantity">الكمية</label>
+                                                                            <input type="number" class="form-control" name="quantity" id="quantity"
+                                                                                   placeholder="أدخل عدد الكتب" value="{{ old('quantity') ?? $book->quantity }}">
+                                                                            @error('quantity')
         <div class="form-text text-danger">{{ $message }}</div>
     @enderror
-                            </div>
-                        </div>
-                        -->
+                                                                        </div>
+                                                                    </div>
+                                                                    -->
                     <div class="row mb-2">
                         <div class="col-md-6">
                             <label class="form-label" for="discount">إمكانية التخفيض</label>
-                            <select name="discount" id="discount" class="form-control">
+                            <select name="discount" id="discount" class="form-select">
                                 <option value="1" @if ($book->discount == 1) {{ 'selected' }} @endif>نعم</option>
                                 <option value="0" @if ($book->discount == 0) {{ 'selected' }} @endif>لا</option>
                             </select>
@@ -114,8 +114,9 @@
                     <div class="row mb-2">
                         <div class="col-md-6">
                             <label class="form-label" for="purchase_price">سعر الشراء</label>
-                            <input type="number" class="form-control" name="purchase_price" id="purchase_price"
-                                placeholder="أدخل سعر الشراء" value="{{ old('purchase_price') ?? $book->purchase_price }}">
+                            <input type="number" class="form-control text-center" name="purchase_price" id="purchase_price"
+                                placeholder="أدخل سعر الشراء"
+                                value="{{ old('purchase_price') ?? $book->purchase_price }}">
                             @error('purchase_price')
                                 <div class="form-text text-danger">{{ $message }}</div>
                             @enderror
@@ -123,8 +124,8 @@
 
                         <div class="col-md-6">
                             <label class="form-label" for="sale_percentage">نسبة البيع</label>
-                            <select name="sale_percentage" class="form-control text-center" id="sale_percentage">
-                                <option>- اختر نسبة مئوية -</option>
+                            <select name="sale_percentage" class="form-select text-center" id="sale_percentage">
+                                <option>اختر نسبة</option>
                                 <option value="0" @if ($book->sale_percentage == 0) {{ 'selected' }} @endif>0%</option>
                                 <option value="10" @if ($book->sale_percentage == 10) {{ 'selected' }} @endif>10%
                                 </option>

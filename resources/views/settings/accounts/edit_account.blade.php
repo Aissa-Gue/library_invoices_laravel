@@ -31,7 +31,7 @@
                     <div class="input-group">
                         <label class="col-md-4">اختر مستخدم</label>
                         <div class="col-md-8">
-                            <select id="old_username" class="form-control @error('old_username') is-invalid @enderror"
+                            <select id="old_username" class="form-select @error('old_username') is-invalid @enderror"
                                 name="old_username" required>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->username }}">{{ $user->username }}</option>
@@ -65,7 +65,7 @@
                     <div class="input-group">
                         <label class="col-md-4">صلاحيات المستخدم</label>
                         <div class="col-md-8">
-                            <select id="role" class="form-control @error('role') is-invalid @enderror" name="role" required>
+                            <select id="role" class="form-select @error('role') is-invalid @enderror" name="role" required>
                                 <option value="seller" @if (old('role') == 'seller') selected @endif>بائع</option>
                                 <option value="admin" @if (old('role') == 'admin') selected @endif>مسؤول</option>
                             </select>

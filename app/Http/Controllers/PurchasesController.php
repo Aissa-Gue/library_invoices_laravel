@@ -22,9 +22,11 @@ class PurchasesController extends Controller
         $books = PurchaseBook::Join("books", function ($join) {
             $join->on("books.id", "=", "purchase_books.book_id");
         })
-            ->select(DB::raw('sum(purchase_books.quantity * purchase_books.purchase_price) As purchase_price_sum'),
+            ->select(
+                DB::raw('sum(purchase_books.quantity * purchase_books.purchase_price) As purchase_price_sum'),
                 DB::raw('sum(purchase_books.quantity * (purchase_books.purchase_price + purchase_books.purchase_price * books.sale_percentage / 100)) As sale_price_sum'),
-                DB::raw('sum(purchase_books.quantity) As quantity'))
+                DB::raw('sum(purchase_books.quantity) As quantity')
+            )
             ->where("purchase_books.purchase_id", "=", $id)
             ->groupBy("purchase_books.purchase_id")
             ->first();
@@ -94,6 +96,7 @@ class PurchasesController extends Controller
         $book = Book::join('purchase_books', 'purchase_books.book_id', 'books.id')
             ->where('purchase_id', $id)
             ->select('books.purchase_price')
+            ->orderBy('purchase_books.created_at', 'desc')
             ->first();
 
         $purchasePriceAlert = "تم تعديل سعر شراء الكتاب إلى: " . number_format($book->purchase_price, 2) . " بنجاح";
@@ -197,7 +200,6 @@ class PurchasesController extends Controller
         if ($request->paid_amount > $this->calculate($id)['total_purchase_price']) {
             $paidAmountAlert = "خطأ: لا يمكن أن يكون المبلغ المدفوع أكبر من المبلغ المستحق !";
             return redirect()->back()->with(compact('paidAmountAlert'));
-
         } else {
             DB::transaction(function () use ($validated, $id) {
                 Purchase::find($id)->update($validated);
@@ -255,7 +257,8 @@ class PurchasesController extends Controller
             $oldSalePrice = ($oldBookInfo->purchase_price + $oldBookInfo->purchase_price * $oldBookInfo->sale_percentage / 100);
 
             return redirect()->back()
-                ->with(compact(
+                ->with(
+                    compact(
                         'priceAlert',
                         'bookId',
                         'title',

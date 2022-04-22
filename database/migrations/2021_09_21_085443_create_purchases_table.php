@@ -15,10 +15,17 @@ class CreatePurchasesTable extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('provider_id')->references('person_id')->on('providers');
-            $table->foreignId('created_by')->references('id')->on('users');
-            $table->foreignId('updated_by')->references('id')->on('users');
-            $table->float('paid_amount')->default(0);
+			
+			$table->unsignedBigInteger('provider_id');
+            $table->foreign('provider_id')->references('person_id')->on('providers');
+			
+			$table->unsignedBigInteger('created_by');
+            $table->foreign('created_by')->references('id')->on('users');
+			
+			$table->unsignedBigInteger('updated_by');
+            $table->foreign('updated_by')->references('id')->on('users');
+            
+			$table->float('paid_amount')->default(0);
             $table->float('required_amount')->nullable();
             $table->timestamps();
             $table->softDeletes();

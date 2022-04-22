@@ -14,9 +14,10 @@ class CreateProvidersTable extends Migration
     public function up()
     {
         Schema::create('providers', function (Blueprint $table) {
-            $table->integer('person_id')->unsigned()->unique();
-            $table->foreignId('person_id')->references('id')->on('people');
-            $table->string('establishment')->nullable();
+			$table->unsignedBigInteger('person_id')->unique();
+			$table->foreign('person_id')->references('id')->on('people');
+           
+		   $table->string('establishment')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
